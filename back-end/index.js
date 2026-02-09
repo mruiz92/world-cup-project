@@ -17,4 +17,9 @@ app.use(
   })
 );
 
+app.get('/test-connection', (req, res) => {
+  res.status(200).json({ message: 'Backend connected successfully!' });
+});
+
+
 app.listen(PORT, () => console.log("Server running on port " + PORT));
