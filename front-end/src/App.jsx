@@ -15,8 +15,8 @@ function App() {
 
   return (
     <div>
-      <h1>Connection Status:</h1>
-      <p>{message}</p>
+      {/* <h1>Connection Status:</h1>
+      <p>{message}</p> */}
 
       <CommunityPage />
     </div>
