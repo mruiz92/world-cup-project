@@ -1,6 +1,7 @@
 // In your React component (e.g., App.js)
 
 import React, { useEffect, useState } from 'react';
+import CommunityPage from './pages/CommunityPage';
 
 function App() {
   const [message, setMessage] = useState('Not connected');
