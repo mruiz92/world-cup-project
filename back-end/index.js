@@ -17,8 +17,41 @@ app.use(
   })
 );
 
-app.get('/test-connection', (req, res) => {
-  res.status(200).json({ message: 'Backend connected successfully!' });
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: username },
+          { email: email }
+        ]
+      },
+    });
+
+    if (existingUser) {
+      return res.status(400).json("Username or Email already exists!");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    const { password: _, ...safeUser } = user;
+    
+    res.status(201).json(safeUser);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("An error occurred during registration.");
+  }
 });
 
 

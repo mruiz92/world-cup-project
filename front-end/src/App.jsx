@@ -1,25 +1,22 @@
-// In your React component (e.g., App.js)
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import AppLayout from "./layouts/AppLayout";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 
-import React, { useEffect, useState } from "react";
-import CommunityPage from "./pages/CommunityPage";
 
 function App() {
-  const [message, setMessage] = useState("Not connected");
-
-  useEffect(() => {
-    fetch("http://localhost:4000/test-connection")
-      .then((response) => response.json())
-      .then((data) => setMessage(data.message))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
 
   return (
-    <div>
-      {/* <h1>Connection Status:</h1>
-      <p>{message}</p> */}
-
-      <CommunityPage />
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/register" />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
   );
 }
 
