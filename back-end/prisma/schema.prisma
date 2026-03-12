@@ -20,6 +20,7 @@ model User {
   password     String
   bio          String? 
   profilePic   String?
+  currency     Int
   isAdmin      Boolean        @default(false)
   isPublic     Boolean        @default(false)
   createdAt    DateTime       @default(now())
@@ -40,8 +41,27 @@ model Token {
 model Card {
   id              Int         @id @default(autoincrement())
   name            String
-  setCode         String
-  collectorNumber String
+  rating          Int
+  nationality     String
+  positions        String
+
+  //Physical Stats
+  age             Int
+  height_cm       Int
+  weight_kg       Int
+  foot            String
+
+  // Game Stats
+  pace             Int
+  shooting         Int
+  passing          Int
+  dribbling        Int
+  defending        Int
+  physical         Int
+
+  playerImageURL  String
+  setCode         String?
+  collectorNumber String?
   inventoryItems  Inventory[] 
   tradeList       TradeList[]
 }
