@@ -29,8 +29,8 @@ const TradeRowCard = styled(MuiCard)(({ theme }) => ({
 
 const UserTradeRow = ({ user }) => {
   return (
-    <div>
-      <h3>{user.username}</h3>
+    <TradeRowCard variant="outlined">
+      <Typography variant="h3">{user.username}</Typography>
 
       <div>
         {user.tradableCards.map((card) => (
@@ -42,7 +42,7 @@ const UserTradeRow = ({ user }) => {
           </div>
         ))}
       </div>
-    </div>
+    </TradeRowCard>
   );
 };
 
