@@ -2,9 +2,11 @@ import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
 const TradeRowCard = styled(Card)(({ theme }) => ({
