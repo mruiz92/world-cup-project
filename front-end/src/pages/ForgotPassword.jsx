@@ -30,29 +30,41 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-export default function Login() {
+export default function ForgotPassword() {
     const navigate = useNavigate();
 
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-    const [passwordError, setPasswordError] = React.useState(false);
-    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+    const [emailError, setEmailError] = React.useState(false);
+    const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+    //    const [passwordError, setPasswordError] = React.useState(false);
+    //    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
     const validateInputs = () => {
+        const email = document.getElementById('email');
         const username = document.getElementById('username');
-        const password = document.getElementById('password');
+        /* const password = document.getElementById('password'); */
 
         let isValid = true;
 
+        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+            setEmailError(true);
+            setEmailErrorMessage('Please enter a valid email address.');
+            isValid = false;
+        } else {
+            setEmailError(false);
+            setEmailErrorMessage('');
+        }
         if (!username.value || !/\S+@\S+\.\S+/.test(username.value)) {
             setNameError(true);
-            setNameErrorMessage('Please enter a valid email address.');
+            setNameErrorMessage('Please enter a valid username.');
             isValid = false;
         } else {
             setNameError(false);
             setNameErrorMessage('');
         }
 
+        {/*
         if (!password.value) {
             setPasswordError(true);
             setPasswordErrorMessage('Password is required.');
@@ -61,6 +73,7 @@ export default function Login() {
             setPasswordError(false);
             setPasswordErrorMessage('');
         }
+        */}
 
         return isValid;
     };
@@ -74,7 +87,8 @@ export default function Login() {
 
         const payload = {
             username: data.get('username'),
-            password: data.get('password'),
+            email: data.get('email')
+            /* password: data.get('password') */
         };
 
         try {
@@ -87,7 +101,7 @@ export default function Login() {
             const result = await response.json();
 
             if (result.ok) {
-                navigate("/dashboard");
+                navigate("/email_verify");
             } else {
                 alert(result.message || "Invalid credentials");
             }
@@ -104,7 +118,7 @@ export default function Login() {
                 variant="h4"
                 sx={{fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}
             >
-                Sign In
+                Forgot Password?
             </Typography>
 
             <Box
@@ -112,6 +126,26 @@ export default function Login() {
                 onSubmit={handleSubmit}
                 sx={{display: 'flex', flexDirection: 'column', gap: 2}}
             >
+                Enter either your email or username
+                to reset your password:
+                <FormControl>
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <TextField
+                        id="email"
+                        name="email"
+                        required
+                        fullWidth
+                        placeholder="your@email.com"
+                        autoComplete="email"
+                        error={emailError}
+                        helperText={emailErrorMessage}
+                    />
+                </FormControl>
+
+                <Divider>
+                    <Typography sx={{color: 'text.secondary'}}>or</Typography>
+                </Divider>
+
                 <FormControl>
                     <FormLabel htmlFor="username">Username</FormLabel>
                     <TextField
@@ -126,6 +160,7 @@ export default function Login() {
                     />
                 </FormControl>
 
+                {/*  Password field shouldn't be applicable here since the user "forgot" their password.
                 <FormControl>
                     <FormLabel htmlFor="password">Password</FormLabel>
                     <TextField
@@ -140,29 +175,27 @@ export default function Login() {
                         helperText={passwordErrorMessage}
                     />
                 </FormControl>
+                */}
 
                 <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                 >
-                    Sign In
+                    Submit
                 </Button>
-
+                <Divider />
                 <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
                     <Typography sx={{textAlign: 'center'}}>
-                        Forgot your password? {' '}
-                        <Link href="/forgot_password" variant="body2">
-                            Click here to reset it.
+                        Are you sure you're registered?{' '}
+                        <Link href="/register" variant="body2">
+                            Click here to sign up!
                         </Link>
                     </Typography>
                 </Box>
             </Box>
 
-            <Divider>
-                <Typography sx={{color: 'text.secondary'}}>or</Typography>
-            </Divider>
-
+            {/*
             <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
                 <Typography sx={{textAlign: 'center'}}>
                     Not registered?{' '}
@@ -171,6 +204,8 @@ export default function Login() {
                     </Link>
                 </Typography>
             </Box>
+            */}
+
         </Card>
     );
 }
