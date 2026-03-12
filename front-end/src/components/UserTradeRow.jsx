@@ -11,7 +11,6 @@ const TradeRowCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   width: "100%",
-  maxWidth: 450,
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: "auto",
