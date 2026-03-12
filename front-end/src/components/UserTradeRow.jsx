@@ -33,9 +33,16 @@ const UserTradeRow = ({ user }) => {
           alt={user.username}
           sx={{ width: 56, height: 56 }}
         />
-        <Typography variant="h6" fontWeight="bold">
+        <Link
+          component="button"
+          variant="h6"
+          fontWeight="bold"
+          underline="hover"
+          onClick={() => {}}
+          sx={{ color: "text.primary", textAlign: "left" }}
+        >
           {user.username}
-        </Typography>
+        </Link>
       </Stack>
 
       <Stack
