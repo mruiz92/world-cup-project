@@ -63,23 +63,25 @@ const UserTradeRow = ({ user }) => {
       >
         {user.tradableCards.map((card) => (
           <Card key={card.id} sx={{ minWidth: 120, maxWidth: 120 }}>
-            <CardMedia
-              component="img"
-              height="140"
-              image={card.image}
-              alt={card.playerName}
-            />
-            <Box sx={{ p: 1 }}>
-              <Typography variant="caption" display="block" fontWeight="bold">
-                {card.playerName}
-              </Typography>
-              <Typography variant="caption" display="block">
-                {card.nationality}
-              </Typography>
-              <Typography variant="caption" display="block">
-                {card.rarity}
-              </Typography>
-            </Box>
+            <CardActionArea onClick={() => {}}>
+              <CardMedia
+                component="img"
+                height="140"
+                image={card.image}
+                alt={card.playerName}
+              />
+              <Box sx={{ p: 1 }}>
+                <Typography variant="caption" display="block" fontWeight="bold">
+                  {card.playerName}
+                </Typography>
+                <Typography variant="caption" display="block">
+                  {card.nationality}
+                </Typography>
+                <Typography variant="caption" display="block">
+                  {card.rarity}
+                </Typography>
+              </Box>
+            </CardActionArea>
           </Card>
         ))}
       </Stack>
