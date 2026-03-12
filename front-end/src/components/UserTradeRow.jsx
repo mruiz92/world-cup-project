@@ -30,6 +30,7 @@ const TradeRowCard = styled(MuiCard)(({ theme }) => ({
 const UserTradeRow = ({ user }) => {
   return (
     <TradeRowCard variant="outlined">
+      <img src={user.pfp} />
       <Typography variant="h3">{user.username}</Typography>
 
       <div>
