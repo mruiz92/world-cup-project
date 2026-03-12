@@ -1,6 +1,10 @@
 import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 
 const TradeRowCard = styled(Card)(({ theme }) => ({
@@ -22,19 +26,40 @@ const TradeRowCard = styled(Card)(({ theme }) => ({
 const UserTradeRow = ({ user }) => {
   return (
     <TradeRowCard variant="outlined">
-      <img src={user.pfp} />
-      <Typography variant="h3">{user.username}</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Avatar
+          src={user.pfp}
+          alt={user.username}
+          sx={{ width: 56, height: 56 }}
+        />
+        <Typography variant="h6" fontWeight="bold">
+          {user.username}
+        </Typography>
+      </Stack>
 
-      <div>
+      <Stack direction="row" spacing={2} sx={{ mt: 2, overflowX: "auto" }}>
         {user.tradableCards.map((card) => (
-          <div key={card.id}>
-            <img src={card.image} alt={card.playerName} />
-            <p>{card.playerName}</p>
-            <p>{card.nationality}</p>
-            <p>{card.rarity}</p>
-          </div>
+          <Card key={card.id} sx={{ minWidth: 120, maxWidth: 120 }}>
+            <CardMedia
+              component="img"
+              height="140"
+              image={card.image}
+              alt={card.playerName}
+            />
+            <Box sx={{ p: 1 }}>
+              <Typography variant="caption" display="block" fontWeight="bold">
+                {card.playerName}
+              </Typography>
+              <Typography variant="caption" display="block">
+                {card.nationality}
+              </Typography>
+              <Typography variant="caption" display="block">
+                {card.rarity}
+              </Typography>
+            </Box>
+          </Card>
         ))}
-      </div>
+      </Stack>
     </TradeRowCard>
   );
 };
