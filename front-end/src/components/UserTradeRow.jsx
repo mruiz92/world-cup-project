@@ -37,7 +37,22 @@ const UserTradeRow = ({ user }) => {
         </Typography>
       </Stack>
 
-      <Stack direction="row" spacing={2} sx={{ mt: 2, overflowX: "auto" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          mt: 2,
+          pb: 2,
+          overflowX: "auto",
+          "&::-webkit-scrollbar": {
+            height: "8px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(127, 127, 127, 0.5)",
+            borderRadius: "10px",
+          },
+        }}
+      >
         {user.tradableCards.map((card) => (
           <Card key={card.id} sx={{ minWidth: 120, maxWidth: 120 }}>
             <CardMedia
