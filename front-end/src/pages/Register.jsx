@@ -30,6 +30,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 export default function Register() {
+  const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -101,7 +102,7 @@ export default function Register() {
       const result = await response.json();
 
       if (result.ok) {
-        useNavigate("/login")
+        navigate("/login")
       } else {
         alert(result);
       }
