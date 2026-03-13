@@ -28,6 +28,38 @@ export const FAKE_DATA = [
         image:
           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.futwiz.com%2Fcdn-cgi%2Fimage%2Fwidth%3D300%2Cquality%3D100%2Cformat%3Dwebp%2Fassets%2Fimg%2Ffc26%2Fsocial%2Fcards%2F18029_skills.png%3Fv%3D190945&f=1&nofb=1&ipt=d9d17d8c2bab728a4c16a11ac59bf5c7cf83eaf5d8f04d454e46d4e8318e9a4b",
       },
+      {
+        id: 104,
+        playerName: "Luis Diaz",
+        nationality: "Colombia",
+        rarity: "Rare",
+        image:
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.futwiz.com%2Fcdn-cgi%2Fimage%2Fwidth%3D300%2Cquality%3D100%2Cformat%3Dwebp%2Fassets%2Fimg%2Ffc26%2Fsocial%2Fcards%2F20412_skills.png%3Fv%3D190945&f=1&nofb=1&ipt=ec8d16a6e04f03283d479ac35b5843c8d19db75cf6c0c4672ed9e104cf4a3583",
+      },
+      {
+        id: 105,
+        playerName: "Jarrod Bowen",
+        nationality: "England",
+        rarity: "Uncommon",
+        image:
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.futwiz.com%2Fcdn-cgi%2Fimage%2Fwidth%3D300%2Cquality%3D100%2Cformat%3Dwebp%2Fassets%2Fimg%2Ffc26%2Fsocial%2Fcards%2F18029_skills.png%3Fv%3D190945&f=1&nofb=1&ipt=d9d17d8c2bab728a4c16a11ac59bf5c7cf83eaf5d8f04d454e46d4e8318e9a4b",
+      },
+      {
+        id: 106,
+        playerName: "Christiano Ronaldo",
+        nationality: "Portugal",
+        rarity: "Legendary",
+        image:
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.futwiz.com%2Fcdn-cgi%2Fimage%2Fwidth%3D300%2Cquality%3D100%2Cformat%3Dwebp%2Fassets%2Fimg%2Ffc26%2Fsocial%2Fcards%2F309_skills.png%3Fv%3D190944&f=1&nofb=1&ipt=845278317d740f944e7e5a7ad1163aa3bbd81c69a46f7f42f90cc9acda97f198",
+      },
+      {
+        id: 107,
+        playerName: "James Rodriguez",
+        nationality: "Colombia",
+        rarity: "Epic",
+        image:
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.futwiz.com%2Fen%2Ffc24%2Fimage%3Furl%3Dhttps%3A%2F%2Fcdn.futwiz.com%2Fassets%2Fimg%2Ffc25%2Fsocial%2Fcards%2F20397_skills.png%3Fv%3D030415.png&f=1&nofb=1&ipt=621b81ecb538ac12424f610acb202aa9770d02e232488bc4624dbb890caf9d7d",
+      },
     ],
   },
   {
