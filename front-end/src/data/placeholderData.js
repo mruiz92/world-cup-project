@@ -6,7 +6,7 @@ export const FAKE_DATA = [
     tradableCards: [
       {
         id: 101,
-        playerName: "Lionel Messi",
+        playerName: "L. Messi",
         nationality: "Argentina",
         rarity: "Legendary",
         image:
@@ -14,7 +14,7 @@ export const FAKE_DATA = [
       },
       {
         id: 102,
-        playerName: "Matt Freese",
+        playerName: "M. Freese",
         nationality: "United States",
         rarity: "Common",
         image:
@@ -22,7 +22,7 @@ export const FAKE_DATA = [
       },
       {
         id: 103,
-        playerName: "Jarrod Bowen",
+        playerName: "J. Bowen",
         nationality: "England",
         rarity: "Uncommon",
         image:
@@ -30,7 +30,7 @@ export const FAKE_DATA = [
       },
       {
         id: 104,
-        playerName: "Luis Diaz",
+        playerName: "L. Diaz",
         nationality: "Colombia",
         rarity: "Rare",
         image:
@@ -38,7 +38,7 @@ export const FAKE_DATA = [
       },
       {
         id: 105,
-        playerName: "Jarrod Bowen",
+        playerName: "J. Bowen",
         nationality: "England",
         rarity: "Uncommon",
         image:
@@ -46,7 +46,7 @@ export const FAKE_DATA = [
       },
       {
         id: 106,
-        playerName: "Christiano Ronaldo",
+        playerName: "C. Ronaldo",
         nationality: "Portugal",
         rarity: "Legendary",
         image:
@@ -54,7 +54,7 @@ export const FAKE_DATA = [
       },
       {
         id: 107,
-        playerName: "James Rodriguez",
+        playerName: "J. Rodriguez",
         nationality: "Colombia",
         rarity: "Epic",
         image:
@@ -69,7 +69,7 @@ export const FAKE_DATA = [
     tradableCards: [
       {
         id: 201,
-        playerName: "Luis Diaz",
+        playerName: "L. Diaz",
         nationality: "Colombia",
         rarity: "Rare",
         image:
@@ -77,7 +77,7 @@ export const FAKE_DATA = [
       },
       {
         id: 202,
-        playerName: "Jarrod Bowen",
+        playerName: "J. Bowen",
         nationality: "England",
         rarity: "Uncommon",
         image:
@@ -85,7 +85,7 @@ export const FAKE_DATA = [
       },
       {
         id: 203,
-        playerName: "Christiano Ronaldo",
+        playerName: "C. Ronaldo",
         nationality: "Portugal",
         rarity: "Legendary",
         image:
@@ -100,7 +100,7 @@ export const FAKE_DATA = [
     tradableCards: [
       {
         id: 301,
-        playerName: "James Rodriguez",
+        playerName: "J. Rodriguez",
         nationality: "Colombia",
         rarity: "Epic",
         image:
