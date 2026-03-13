@@ -9,6 +9,7 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 
 const TradeRowCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -46,7 +47,11 @@ const UserTradeRow = ({ user }) => {
         </Link>
 
         <Box sx={{ flexGrow: 1 }} />
-        <Button variant="contained" onClick={() => {}}>
+        <Button
+          variant="contained"
+          onClick={() => {}}
+          startIcon={<SwapHorizIcon />}
+        >
           TRADE
         </Button>
       </Stack>
