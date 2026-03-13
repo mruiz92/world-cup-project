@@ -1,6 +1,7 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
@@ -43,6 +44,11 @@ const UserTradeRow = ({ user }) => {
         >
           {user.username}
         </Link>
+
+        <Box sx={{ flexGrow: 1 }} />
+        <Button variant="contained" onClick={() => {}}>
+          TRADE
+        </Button>
       </Stack>
 
       <Stack
