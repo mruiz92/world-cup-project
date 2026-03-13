@@ -14,11 +14,11 @@ export const FAKE_DATA = [
       },
       {
         id: 102,
-        playerName: "M. Freese",
-        nationality: "United States",
-        rarity: "Common",
+        playerName: "L. Messi",
+        nationality: "Argentina",
+        rarity: "Legendary",
         image:
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Foyf3dba6%2Fproduction%2F57fb005f26d8e6633036164bea04bc0f1d5781f0-800x800.png&f=1&nofb=1&ipt=d37cb9f120d17effe91c00af3ba3ca84601be5a9c5696c3fa92fe61f05a52fb9",
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.futwiz.com%2Fcdn-cgi%2Fimage%2Fwidth%3D1500%2Cquality%3D100%2Cformat%3Dwebp%2Fassets%2Fimg%2Ffc26%2Fsocial%2Fcards%2F88.png%3Fv%3D190940&f=1&nofb=1&ipt=483b4c75b87c624b8dd1415ce7d5e1285c1fff1e1094790582a1e3f24aba6cd2",
       },
       {
         id: 103,
