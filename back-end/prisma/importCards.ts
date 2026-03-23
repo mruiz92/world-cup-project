@@ -24,7 +24,8 @@ async function main() {
 
   // Map the CSV rows to database
   const cardData = records.map((row: any) => ({
-    name: row.short_name,
+    short_name: row.short_name,
+    long_name: row.long_name,
     rating: parseInt(row.overall) || 0,
     nationality: row.nationality_name,
     positions: String(row.player_positions || ""),

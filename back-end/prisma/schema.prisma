@@ -20,7 +20,7 @@ model User {
   password     String
   bio          String? 
   profilePic   String?
-  currency     Int
+  currency     Int            @default(0)
   isAdmin      Boolean        @default(false)
   isPublic     Boolean        @default(false)
   createdAt    DateTime       @default(now())
@@ -40,10 +40,11 @@ model Token {
 
 model Card {
   id              Int         @id @default(autoincrement())
-  name            String
+  short_name      String
+  long_name       String
   rating          Int
   nationality     String
-  positions        String
+  positions       String
 
   //Physical Stats
   age             Int
