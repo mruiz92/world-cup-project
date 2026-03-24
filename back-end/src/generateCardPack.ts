@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const generatePack = async (count: number = 5) => {
+export const generateCardPack = async (count: number = 5) => {
   const pack = [];
 
   for (let i = 0; i < count; i++) {
