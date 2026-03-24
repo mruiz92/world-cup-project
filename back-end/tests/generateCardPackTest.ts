@@ -1,4 +1,4 @@
-import { generatePack } from '../src/generateCardPack';
+import { generateCardPack } from '../src/generateCardPack';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -10,13 +10,13 @@ async function runTest() {
   try {
     console.log(`---Generating Card Pack (${count} cards)---`);
     
-    const pack = await generatePack(count);
+    const pack = await generateCardPack(count);
 
     if (pack.length === 0) {
       console.log("No cards found!");
     } else {
       pack.forEach((card, index) => {
-        console.log(`${index + 1}. [${card.rating}] ${card.name} - ${card.nationality}`);
+        console.log(`${index + 1}. [${card.rating}] ${card.short_name} - ${card.nationality}`);
       });
     }
 
