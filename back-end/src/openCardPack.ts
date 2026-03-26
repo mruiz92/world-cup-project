@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { generateCardPack } from './generateCardPack';
+import { generateCardPack } from './generateCardPack.ts';
 
 const prisma = new PrismaClient();
 

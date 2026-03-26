@@ -68,7 +68,7 @@ model Card {
 }
 
 model Inventory {
-  Inventory_id  Int          @id @default(autoincrement())
+  id  Int          @id @default(autoincrement())
   cardId        Int
   userId        Int
   card          Card         @relation(fields: [cardId], references: [id])
