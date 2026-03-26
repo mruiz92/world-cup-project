@@ -43,8 +43,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 export default function Home() {
   const navigate = useNavigate();
-
-  const userId = 2;
+  const userId = 1; //Replace with current userId
   const [user, setUser] = React.useState(null);
   const [inventory, setInventory] = React.useState([]);
   const [profileMenuAnchor, setProfileMenuAnchor] = React.useState(null);
@@ -86,17 +85,6 @@ export default function Home() {
         .catch((err) => console.error("Error loading inventory:", err));
     }
   }, [user?.id, user?.currency]);
-
-  const groupedInventory = inventory.reduce((groups, item) => {
-    const nation = item.card?.nationality || "Unknown";
-    if (!groups[nation]) {
-      groups[nation] = [];
-    }
-    groups[nation].push(item);
-    return groups;
-  }, {});
-
-  const nationalities = Object.keys(groupedInventory).sort();
 
   const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
     // Check if user is loaded
@@ -181,10 +169,21 @@ export default function Home() {
     }
   };
 
-  console.log(
+  /*console.log(
     "My Card IDs:",
     inventory.map((item) => item.card.id),
-  );
+  );*/
+
+  const groupedInventory = inventory.reduce((groups, item) => {
+    const nation = item.card?.nationality || "Unknown";
+    if (!groups[nation]) {
+      groups[nation] = [];
+    }
+    groups[nation].push(item);
+    return groups;
+  }, {});
+
+  const nationalities = Object.keys(groupedInventory).sort();
 
   const handleProfileMenuOpen = (event) =>
     setProfileMenuAnchor(event.currentTarget);

@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const { openCardPack } = require('./src/openCardPack.ts');
+const { PrismaClient } = require("@prisma/client");
+const { openCardPack } = require("./src/openCardPack.ts");
 
 const prisma = new PrismaClient();
 
@@ -16,7 +16,7 @@ app.use(
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.post("/register", async (req, res) => {
@@ -42,23 +42,22 @@ app.post("/register", async (req, res) => {
     });
 
     const { password: _, ...safeUser } = user;
-    
-    res.status(201).json(safeUser);
 
+    res.status(201).json(safeUser);
   } catch (error) {
     console.error(error);
     res.status(500).json("An error occurred during registration.");
   }
 });
 
-app.get('/users/:id', async (req, res) => {
+app.get("/users/:id", async (req, res) => {
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(req.params.id) }
+    where: { id: parseInt(req.params.id) },
   });
   res.json(user);
 });
 
-app.get('/api/inventory/:id', async (req, res) => {
+app.get("/api/inventory/:id", async (req, res) => {
   const userId = parseInt(req.params.id);
 
   try {
@@ -78,7 +77,7 @@ app.get('/api/inventory/:id', async (req, res) => {
   }
 });
 
-app.post('/api/open-pack', async (req, res) => {
+app.post("/api/open-pack", async (req, res) => {
   try {
     const { userId, packSize, packCost } = req.body;
 
@@ -130,12 +129,10 @@ app.post("/api/sell-card", async (req, res) => {
       }
       return updatedUser;
     });
-    res
-      .status(200)
-      .json({
-        message: "Card sold successfully",
-        newCurrency: result.currency,
-      });
+    res.status(200).json({
+      message: "Card sold successfully",
+      newCurrency: result.currency,
+    });
   } catch (error) {
     console.error("Sell error:", error);
     res.status(500).json({ error: "Failed to process sale" });
