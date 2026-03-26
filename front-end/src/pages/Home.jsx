@@ -12,6 +12,7 @@ import {
   CardMedia,
   CardContent,
   Modal,
+  styled
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import PeopleIcon from "@mui/icons-material/People";
@@ -20,6 +21,18 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import { useNavigate } from "react-router-dom";
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.2s ease-in-out',
+  borderRadius: theme.shape.borderRadius, 
+  boxShadow: 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  '&:hover': {
+    transform: 'scale(1.03)',
+    boxShadow: 'hsla(220, 30%, 5%, 0.15) 0px 10px 20px 0px',
+  },
+  
+}));
 export default function Home() {
   const navigate = useNavigate();
 
@@ -45,6 +58,7 @@ export default function Home() {
       }
     };
     fetchUser();
+
   }, [userId, navigate]);
 
   React.useEffect(() => {
@@ -97,10 +111,6 @@ export default function Home() {
         setOpenCards(data.cards);
         // Open popup
         setIsModalOpen(true);
-        // Refresh the UI
-        // Update currency in the 'user' state
-        setUser((prev) => ({ ...prev, currency: prev.currency - 100 }));
-
         // Re-fetch inventory to show the new cards
         const invRes = await fetch(
           `http://localhost:4000/api/inventory/${user.id}`,
@@ -116,6 +126,8 @@ export default function Home() {
       alert("Could not connect to the server.");
     }
   };
+
+
   console.log(
     "My Card IDs:",
     inventory.map((item) => item.card.id),
@@ -125,41 +137,58 @@ export default function Home() {
   const handleMenuClose = () => setAnchorEl(null);
 
   return (
-    <Box sx={{ flexGrow: 1, position: "absolute", top: 0, left: 0,}}>
-      <Box sx={{ position: "relative", height: 200, width: "100vw" }}>
-        <Box
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default'}}>
+      <Box sx={{ position: "relative", overflow: 'hidden' }}>
+        {/*<Box
           component="img"
           sx={{
-            height: 200,
-            width: "100vw",
+            height: "auto",
+            width: "100%",
             objectFit: "cover",
             display: "block",
           }}
           alt="Game Banner"
-          src="https://thumbs.dreamstime.com/b/soccer-ball-goal-green-grass-94864016.jpg"
-        />
+          src="../src/assets/PocketPlayersBanner.png"
+        />*/}
+     <Box 
+  sx={{ 
+    display: 'flex',          // 1. Activate Flexbox (puts items in a row)
+    flexDirection: 'row',     // 2. Ensure it's a row (default, but good to be explicit)
+    alignItems: 'center',     // 3. Vertical Centering (up and down)
+    justifyContent: 'center', // 4. Horizontal Centering (left and right)
+    gap: 2,                   // 5. Automatic spacing between the 3 items
+    width: '100%',            // 6. Make sure the box spans the full page width
+    py: 4,                    // 7. Optional: Padding top/bottom for breathing room
+  }}
+>
+        <Box
+    component="img"
+    sx={{ height: 60, width: 'auto' }}
+    alt="Icon Left"
+    src="../src/assets/SoccerBall.png" 
+  />
         <Typography
           variant="h3"
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontWeight: "bold",
-            color: "white",
-            textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
-            width: "100%",
-            textAlign: "center",
+fontWeight: "bold",
+      color: "text.primary",
           }}
         >
           Pocket Players
         </Typography>
-      </Box>
+      
+      <Box
+    component="img"
+    sx={{ height: 60, width: 'auto' }}
+    alt="Icon Right"
+    src="../src/assets/SoccerBall.png" 
+  />
+  </Box>
       <AppBar
-        position="static"
-        sx={{ backgroundColor: "#1976d2", width: "100vw", }}
+       position="static" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
       >
         <Toolbar>
+          <Box sx={{ display: 'flex', flex: 1 }}>
           <Button
             sx={{ mr: 2 }}
             color="inherit"
@@ -175,13 +204,27 @@ export default function Home() {
           >
             Open Pack
           </Button>
-          <Box sx={{ flexGrow: 1 }} />
+          </Box>
+<Typography
+    variant="h6"
+    component="div"
+    sx={{
+      fontWeight: 'bold',
+      textAlign: 'center',
+      position: 'absolute',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    }}
+  >
+    Total Funds: {user ? user.currency : 0}
+  </Typography>
+          
           <Box>
             <Button
               color="inherit"
               onClick={handleMenuOpen}
               startIcon={<AccountCircle />}
-              sx={{ fontWeight: "bold" }}
+              sx={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}
             >
               {user ? user.username : "Loading..."}
             </Button>
@@ -260,6 +303,7 @@ export default function Home() {
           </Box>
         ))}
       </Box>
+
       {/* Pack Opening Modal */}
       <Modal
         open={isModalOpen}
@@ -288,8 +332,8 @@ export default function Home() {
               <Grid item key={index}>
 
                 <Card sx={{ width: 180, height: 300 }}>
-                                        <Typography
-                      variant="caption"
+                    <Typography
+                      variant="h7"
                       display="block"
                       color="primary"
                     >
@@ -330,6 +374,7 @@ export default function Home() {
           </Button>
         </Box>
       </Modal>
+    </Box>
     </Box>
   );
 }
