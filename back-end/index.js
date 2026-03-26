@@ -1,4 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
+const { openCardPack } = require('./src/openCardPack.ts');
+
 const prisma = new PrismaClient();
 
 const express = require("express");
@@ -54,5 +56,53 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.get('/users/:id', async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(req.params.id) }
+  });
+  res.json(user);
+});
+
+app.get('/api/inventory/:id', async (req, res) => {
+  const userId = parseInt(req.params.id);
+
+  try {
+    const inventory = await prisma.inventory.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        card: true,
+      },
+    });
+
+    res.json(inventory);
+  } catch (error) {
+    console.error("Prisma Error:", error);
+    res.status(500).json({ error: "Failed to fetch inventory" });
+  }
+});
+
+app.post('/api/open-pack', async (req, res) => {
+  try {
+    const { userId, packSize, packCost } = req.body;
+
+    // Validate input
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    console.log(`User ${userId} is attempting to open a pack...`);
+
+    // Call the TypeScript function
+    const result = await openCardPack(userId, packSize || 5, packCost || 0);
+
+    // Return the new cards to the frontend
+    res.json(result);
+  } catch (error) {
+    console.error("Pack Opening Error:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
