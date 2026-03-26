@@ -100,5 +100,46 @@ app.post('/api/open-pack', async (req, res) => {
   }
 });
 
+app.post("/api/sell-card", async (req, res) => {
+  const { userId, cardId, sellPrice } = req.body;
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      //Update user's currency
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: { currency: { increment: sellPrice } },
+      });
+      //Find inventory record
+      const inventoryItem = await tx.inventory.findFirst({
+        where: { userId: userId, cardId: cardId },
+      });
+
+      if (!inventoryItem) {
+        throw new Error("Card not found in inventory");
+      }
+      if (inventoryItem.quantity > 1) {
+        await tx.inventory.update({
+          where: { id: inventoryItem.id },
+          data: { quantity: { decrement: 1 } },
+        });
+      } else {
+        await tx.inventory.delete({
+          where: { id: inventoryItem.id },
+        });
+      }
+      return updatedUser;
+    });
+    res
+      .status(200)
+      .json({
+        message: "Card sold successfully",
+        newCurrency: result.currency,
+      });
+  } catch (error) {
+    console.error("Sell error:", error);
+    res.status(500).json({ error: "Failed to process sale" });
+  }
+});
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
