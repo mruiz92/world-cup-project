@@ -22,12 +22,7 @@ app.post("/register", async (req, res) => {
 
   try {
     const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: username },
-          { email: email }
-        ]
-      },
+      where: { email: email },
     });
 
     if (existingUser) {
