@@ -32,6 +32,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function Login() {
     const navigate = useNavigate();
+    //  We shouldn't have to validate if email or users are valid, as they must have registered before seeing this page.
 
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
@@ -43,8 +44,8 @@ export default function Login() {
         const password = document.getElementById('password');
 
         let isValid = true;
-
-        if (!username.value || !/\S+@\S+\.\S+/.test(username.value)) {
+    // || !/\S+@\S+\.\S+/.test(username.value)
+        if (!username.value) {
             setNameError(true);
             setNameErrorMessage('Please enter a valid email address.');
             isValid = false;
@@ -113,13 +114,13 @@ export default function Login() {
                 sx={{display: 'flex', flexDirection: 'column', gap: 2}}
             >
                 <FormControl>
-                    <FormLabel htmlFor="username">Username</FormLabel>
+                    <FormLabel htmlFor="username">Username or Email</FormLabel>
                     <TextField
                         id="username"
                         name="username"
                         required
                         fullWidth
-                        placeholder="PocketPlayer"
+                        placeholder="PocketPlayer or pocketplayer@email.com"
                         autoComplete="username"
                         error={nameError}
                         helperText={nameErrorMessage}

@@ -54,5 +54,36 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const {username, password} = req.body;
+
+  try {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          {username: username},
+          {email: username}
+        ]
+      }
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({ok: false, message: "Invalid credentials!"});
+    }
+
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+    if (!validPassword) {
+      return res.status(400).json({ok: false, message: "Invalid credentials!"});
+    }
+
+    const {password: _, ...safeUser} = existingUser;
+
+    res.json({ok: true, user: safeUser});
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ok: false, message: "An error occurred during login."});
+  }
+});
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
