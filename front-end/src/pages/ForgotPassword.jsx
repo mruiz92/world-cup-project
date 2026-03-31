@@ -37,13 +37,10 @@ export default function ForgotPassword() {
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-    //    const [passwordError, setPasswordError] = React.useState(false);
-    //    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
     const validateInputs = () => {
         const email = document.getElementById('email');
         const username = document.getElementById('username');
-        /* const password = document.getElementById('password'); */
 
         let isValid = true;
 
@@ -63,17 +60,6 @@ export default function ForgotPassword() {
             setNameError(false);
             setNameErrorMessage('');
         }
-
-        {/*
-        if (!password.value) {
-            setPasswordError(true);
-            setPasswordErrorMessage('Password is required.');
-            isValid = false;
-        } else {
-            setPasswordError(false);
-            setPasswordErrorMessage('');
-        }
-        */}
 
         return isValid;
     };
@@ -160,23 +146,6 @@ export default function ForgotPassword() {
                     />
                 </FormControl>
 
-                {/*  Password field shouldn't be applicable here since the user "forgot" their password.
-                <FormControl>
-                    <FormLabel htmlFor="password">Password</FormLabel>
-                    <TextField
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        fullWidth
-                        placeholder="••••••"
-                        autoComplete="new-password"
-                        error={passwordError}
-                        helperText={passwordErrorMessage}
-                    />
-                </FormControl>
-                */}
-
                 <Button
                     type="submit"
                     fullWidth
@@ -194,18 +163,6 @@ export default function ForgotPassword() {
                     </Typography>
                 </Box>
             </Box>
-
-            {/*
-            <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
-                <Typography sx={{textAlign: 'center'}}>
-                    Not registered?{' '}
-                    <Link href="/register" variant="body2">
-                        Click here to sign up!
-                    </Link>
-                </Typography>
-            </Box>
-            */}
-
         </Card>
     );
 }
