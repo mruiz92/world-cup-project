@@ -19,7 +19,8 @@ async function main() {
 
   console.log(`Cleaning old cards and importing ${records.length} new players...`);
 
-  // Clear table
+  // Clear tables
+  await prisma.inventory.deleteMany();
   await prisma.card.deleteMany({});
 
   // Map the CSV rows to database
@@ -39,7 +40,7 @@ async function main() {
     dribbling: parseInt(row.dribbling) || 0,
     defending: parseInt(row.defending) || 0,
     physical: parseInt(row.physic) || 0,
-    playerImageURL: `https://cdn.example.com/players/${row.player_id}.png`,
+    playerImageURL: String(row.player_face_url),
     setCode: "WC2026",
     collectorNumber: row.player_id.toString()
   }));

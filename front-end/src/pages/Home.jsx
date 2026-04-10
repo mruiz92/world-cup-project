@@ -357,8 +357,9 @@ export default function Home() {
                         component="img"
                         height="200"
                         image={
-                          "https://img.freepik.com/premium-vector/editable-design-icon-football_362714-11701.jpg?semt=ais_rp_progressive&w=740&q=80"
+                          item.card?.playerImageURL//"https://img.freepik.com/premium-vector/editable-design-icon-football_362714-11701.jpg?semt=ais_rp_progressive&w=740&q=80"
                         }
+                        referrerPolicy = "no-referrer"
                         sx={{ objectFit: "cover" }}
                       />
                       <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
@@ -427,9 +428,8 @@ export default function Home() {
                     <CardMedia
                       component="img"
                       height="160"
-                      image={
-                        "https://img.freepik.com/premium-vector/editable-design-icon-football_362714-11701.jpg?semt=ais_rp_progressive&w=740&q=80"
-                      }
+                      image={card.playerImageURL} /*"https://img.freepik.com/premium-vector/editable-design-icon-football_362714-11701.jpg?semt=ais_rp_progressive&w=740&q=80"*/
+                      referrerPolicy="no-referrer"
                       sx={{ objectFit: "cover" }}
                     />
                     <CardContent>
