@@ -1,22 +1,20 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `firstName` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the column `lastName` on the `User` table. All the data in the column will be lost.
-  - A unique constraint covering the columns `[username]` on the table `User` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `username` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "TradeStatus" AS ENUM ('AVAILABLE', 'PENDING', 'TRADED', 'HIDDEN');
 
--- AlterTable
-ALTER TABLE "User" DROP COLUMN "firstName",
-DROP COLUMN "lastName",
-ADD COLUMN     "bio" TEXT,
-ADD COLUMN     "isPublic" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "profilePic" TEXT,
-ADD COLUMN     "username" TEXT NOT NULL;
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "bio" TEXT,
+    "profilePic" TEXT,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "isPublic" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Token" (
@@ -61,10 +59,13 @@ CREATE TABLE "TradeList" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TradeList_userId_cardId_key" ON "TradeList"("userId", "cardId");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TradeList_userId_cardId_key" ON "TradeList"("userId", "cardId");
 
 -- AddForeignKey
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -10,7 +10,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DIRECT_URL")    // app uses Accelerate
+  directUrl = env("DATABASE_URL")  // migrations & Studio use direct
 }
 
 model User {
@@ -26,6 +27,12 @@ model User {
   Token        Token[]
   Inventory    Inventory[]
   tradeList    TradeList[]
+}
+
+model BannedEmail {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Token {

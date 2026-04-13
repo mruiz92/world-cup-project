@@ -4,7 +4,7 @@ import AppLayout from "./layouts/AppLayout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CommunityPage from './pages/CommunityPage';
-
+import Admin from "./pages/Admin";
 
 function App() {
 
@@ -16,6 +16,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/admin" element={<Admin />} />
           </Route>
         </Routes>
       </BrowserRouter>
