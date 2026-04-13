@@ -1,11 +1,19 @@
-import * as React from "react";
+import React, { useEffect, useState } from 'react';
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import UserTradeRow from "../components/UserTradeRow";
-import { FAKE_DATA } from "../data/placeholderData";
 
 const Community = () => {
+    const [users, setUsers] = useState([]);
+    
+    useEffect(() => {
+      fetch("http://localhost:4000/api/community")
+        .then((res) => res.json())
+        .then((data) => setUsers(data))
+        .catch((err) => console.error("Error:", err));
+    }, []);
+    
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
@@ -17,7 +25,7 @@ const Community = () => {
       </Typography>
 
       <Stack spacing={4} sx={{ mt: 4 }}>
-        {FAKE_DATA.map((user) => (
+        {users.map((user) => (
           <UserTradeRow key={user.id} user={user} />
         ))}
       </Stack>
