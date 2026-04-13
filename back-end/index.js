@@ -49,5 +49,33 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.get("/api/community", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        isPublic: true,
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePic: true,
+        tradeList: {
+          where: {
+            status: "AVAILABLE",
+          },
+          include: {
+            card: true,
+          },
+        },
+      },
+    });
+  
+    res.json(users);
+  
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("An error occurred while fetching community data.");
+  }
+});
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
