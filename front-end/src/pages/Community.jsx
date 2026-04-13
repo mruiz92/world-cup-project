@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import UserTradeRow from "../components/UserTradeRow";
 import { FAKE_DATA } from "../data/placeholderData";
 
-const CommunityPage = () => {
+const Community = () => {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
@@ -25,4 +25,4 @@ const CommunityPage = () => {
   );
 };
 
-export default CommunityPage;
+export default Community;
