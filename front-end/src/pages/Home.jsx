@@ -78,7 +78,6 @@ export default function Home() {
           setInventory(data);
 
           if (data.length === 0 && user.currency === 0) {
-            console.log("New user detected. Triggering starter pack");
             handleOpenCardPack(10, 0);
           }
         })
@@ -159,8 +158,6 @@ export default function Home() {
             })
             .filter((invItem) => invItem.quantity > 0);
         });
-
-        console.log(`Sold ${item.card.short_name} for ${sellPrice}!`);
       } else {
         alert("Failed to sell card.");
       }
@@ -168,11 +165,6 @@ export default function Home() {
       console.error("Sell error:", error);
     }
   };
-
-  /*console.log(
-    "My Card IDs:",
-    inventory.map((item) => item.card.id),
-  );*/
 
   const groupedInventory = inventory.reduce((groups, item) => {
     const nation = item.card?.nationality || "Unknown";
@@ -479,7 +471,6 @@ export default function Home() {
       >
         <MenuItem
           onClick={() => {
-            console.log("Trading:", selectedCardMenuItem?.card.short_name);
             handleCardMenuClose();
           }}
         >
