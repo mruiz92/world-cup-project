@@ -248,7 +248,7 @@ export default function Home() {
                 sx={{ mr: 2 }}
                 color="inherit"
                 startIcon={<PeopleIcon />}
-                onClick={() => navigate("/communitypage")}
+                onClick={() => navigate("/community")}
               >
                 Community
               </Button>
