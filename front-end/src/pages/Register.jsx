@@ -148,99 +148,100 @@ export default function Register() {
           Sign up
         </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-      >
-        {existingAccountError && <Alert severity="error"> Username/Email already in use! </Alert>}
-        {bannedEmailError && <Alert severity="error">This email has been banned from the platform.</Alert>}
         <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           {existingAccountError && <Alert severity="error"> Username/Email already in use! </Alert>}
+          {bannedEmailError && <Alert severity="error">This email has been banned from the platform.</Alert>}
+          <Box
+              component="form"
+              onSubmit={handleSubmit}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            {existingAccountError && <Alert severity="error"> Username/Email already in use! </Alert>}
 
-          <FormControl>
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <TextField
-                id="username"
-                name="username"
-                required
-                fullWidth
-                placeholder="PocketPlayer"
-                autoComplete="username"
-                error={nameError}
-                helperText={nameErrorMessage}
-                onChange={handleChange}
-            />
-          </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="username">Username</FormLabel>
+              <TextField
+                  id="username"
+                  name="username"
+                  required
+                  fullWidth
+                  placeholder="PocketPlayer"
+                  autoComplete="username"
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  onChange={handleChange}
+              />
+            </FormControl>
 
-          <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <TextField
-                id="email"
-                name="email"
-                required
-                fullWidth
-                placeholder="your@email.com"
-                autoComplete="email"
-                error={emailError}
-                helperText={emailErrorMessage}
-            />
-          </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="email">Email</FormLabel>
+              <TextField
+                  id="email"
+                  name="email"
+                  required
+                  fullWidth
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  error={emailError}
+                  helperText={emailErrorMessage}
+              />
+            </FormControl>
 
-          <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <TextField
-                id="password"
-                name="password"
-                type="password"
-                required
-                fullWidth
-                placeholder="••••••"
-                autoComplete="new-password"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-            />
-          </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <TextField
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  fullWidth
+                  placeholder="••••••"
+                  autoComplete="new-password"
+                  error={passwordError}
+                  helperText={passwordErrorMessage}
+              />
+            </FormControl>
 
-          <FormControl>
-            <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
-            <TextField
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                fullWidth
-                placeholder="••••••"
-                autoComplete="new-password"
-                error={passwordMatchError}
-                helperText={passwordMatchErrorMessage}
-                onChange={handleChange}
-            />
-          </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
+              <TextField
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  fullWidth
+                  placeholder="••••••"
+                  autoComplete="new-password"
+                  error={passwordMatchError}
+                  helperText={passwordMatchErrorMessage}
+                  onChange={handleChange}
+              />
+            </FormControl>
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-        >
-          Sign up
-        </Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+          >
+            Sign up
+          </Button>
 
-        <Divider>
-          <Typography sx={{ color: 'text.secondary' }}>or</Typography>
-        </Divider>
+          <Divider>
+            <Typography sx={{ color: 'text.secondary' }}>or</Typography>
+          </Divider>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Typography sx={{ textAlign: 'center' }}>
-            Already have an account?{' '}
-            <Link href="/login" variant="body2">
-              Sign in
-            </Link>
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography sx={{ textAlign: 'center' }}>
+              Already have an account?{' '}
+              <Link href="/login" variant="body2">
+                Sign in
+              </Link>
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </Card>
