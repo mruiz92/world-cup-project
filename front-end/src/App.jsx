@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import {Dashboard} from "@mui/icons-material";
 import CommunityPage from './pages/CommunityPage';
 import Admin from "./pages/Admin";
 
@@ -15,6 +17,8 @@ function App() {
             <Route path="/" element={<Navigate to="/register" />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot_password" element={<ForgotPassword />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/admin" element={<Admin />} />
           </Route>
