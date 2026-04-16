@@ -5,8 +5,10 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import {Dashboard} from "@mui/icons-material";
+import Home from './pages/Home';
 import CommunityPage from './pages/CommunityPage';
 import Admin from "./pages/Admin";
+
 
 function App() {
 
@@ -19,6 +21,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot_password" element={<ForgotPassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/admin" element={<Admin />} />
           </Route>
