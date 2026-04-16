@@ -53,6 +53,7 @@ export default function Home() {
   const [cardMenuAnchor, setCardMenuAnchor] = React.useState(null);
   const [selectedCardMenuItem, setSelectedCardMenuItem] = React.useState(null);
   const [isSellDialogOpen, setIsSellDialogOpen] = React.useState(false);
+  const [cardPackMessage, setCardPackMessage] = React.useState("");
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -71,6 +72,9 @@ export default function Home() {
   }, [userId, navigate]);
 
   React.useEffect(() => {
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+
     if (user && user.id) {
       fetch(`http://localhost:4000/api/inventory/${user.id}`)
         .then((res) => res.json())
@@ -78,7 +82,12 @@ export default function Home() {
           setInventory(data);
 
           if (data.length === 0 && user.currency === 0) {
+            setCardPackMessage("Welcome Starter Pack!");
             handleOpenCardPack(10, 0);
+          }
+          else if (data.length > 0 && user.lastDailyPack < midnight) {
+            setCardPackMessage("Free Daily Pack!");
+            handleOpenCardPack(5, 0)
           }
         })
         .catch((err) => console.error("Error loading inventory:", err));
@@ -87,8 +96,8 @@ export default function Home() {
 
   const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
     // Check if user is loaded
-    if (!user) return;
 
+    if (!user) return;
     try {
       const response = await fetch("http://localhost:4000/api/open-pack", {
         method: "POST",
@@ -113,6 +122,9 @@ export default function Home() {
         );
         const invData = await invRes.json();
         setInventory(invData);
+        if( packCost > 0 ) {
+          setCardPackMessage("New Pack Opened!");
+        }
       } else {
         // Handle errors
         alert(data.error || "Something went wrong opening the pack.");
@@ -255,9 +267,9 @@ export default function Home() {
               <Button
                 color="inherit"
                 startIcon={<LibraryBooksIcon />}
-                onClick={() => handleOpenCardPack(5, 0)}
+                onClick={() => handleOpenCardPack(5, 100)}
               >
-                Open Pack
+                Open Pack (100)
               </Button>
             </Box>
             <Typography
@@ -406,9 +418,7 @@ export default function Home() {
             }}
           >
             <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
-              {openCards.length > 5
-                ? "Welcome Starter Pack!"
-                : "New Pack Opened!"}
+              {cardPackMessage}
             </Typography>
 
             <Grid container spacing={2} justifyContent="center">

@@ -109,19 +109,24 @@ app.get("/api/inventory/:id", async (req, res) => {
 });
 
 app.post("/api/open-pack", async (req, res) => {
+
   try {
     const { userId, packSize, packCost } = req.body;
-
     // Validate input
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    console.log(`User ${userId} is attempting to open a pack...`);
-
     // Call the TypeScript function
     const result = await openCardPack(userId, packSize || 5, packCost || 0);
 
+    //Daily pack opened
+    if  (packSize === 5 && packCost === 0) {
+      const udateUser = await prisma.user.update({
+        where: { id: userId },
+        data: { lastDailyPack: new Date() }
+      })
+    };
     // Return the new cards to the frontend
     res.json(result);
   } catch (error) {
