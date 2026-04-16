@@ -77,6 +77,8 @@ app.get("/api/community", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json("An error occurred while fetching community data.");
+  }
+});
 
 app.post("/login", async (req, res) => {
   const {username, password} = req.body;
