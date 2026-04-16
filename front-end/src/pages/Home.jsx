@@ -125,6 +125,10 @@ export default function Home() {
         if( packCost > 0 ) {
           setCardPackMessage("New Pack Opened!");
         }
+        setUser((prev) => ({
+          ...prev,
+          currency: data.newCurrency,
+        }));
       } else {
         // Handle errors
         alert(data.error || "Something went wrong opening the pack.");
@@ -267,9 +271,9 @@ export default function Home() {
               <Button
                 color="inherit"
                 startIcon={<LibraryBooksIcon />}
-                onClick={() => handleOpenCardPack(5, 100)}
+                onClick={() => handleOpenCardPack(5, 10000)}
               >
-                Open Pack (100)
+                Open Pack <br/>(10,000)
               </Button>
             </Box>
             <Typography

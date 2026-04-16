@@ -122,13 +122,14 @@ app.post("/api/open-pack", async (req, res) => {
 
     //Daily pack opened
     if  (packSize === 5 && packCost === 0) {
-      const udateUser = await prisma.user.update({
+      const updateUser = await prisma.user.update({
         where: { id: userId },
         data: { lastDailyPack: new Date() }
       })
     };
     // Return the new cards to the frontend
     res.json(result);
+
   } catch (error) {
     console.error("Pack Opening Error:", error.message);
     res.status(400).json({ error: error.message });
