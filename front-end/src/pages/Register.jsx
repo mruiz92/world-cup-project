@@ -22,11 +22,11 @@ const Card = styled(MuiCard)(({ theme }) => ({
   margin: 'auto',
 
   boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+      'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
 
   ...theme.applyStyles('dark', {
     boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+        'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
 
@@ -123,7 +123,7 @@ export default function Register() {
         navigate("/login");
       } else {
         const result = await response.json();
-          setExistingAccountError(true);      
+        setExistingAccountError(true);
       }
     } catch (error) {
       console.error("Server error during registration:", error);
@@ -131,104 +131,104 @@ export default function Register() {
   };
 
   return (
-    <Card variant="outlined">
+      <Card variant="outlined">
 
-      <Typography
-        component="h1"
-        variant="h4"
-        sx={{ fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-      >
-        Sign up
-      </Typography>
-
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-      >
-        {existingAccountError && <Alert severity="error"> Username/Email already in use! </Alert>}
-
-        <FormControl>
-          <FormLabel htmlFor="username">Username</FormLabel>
-          <TextField
-            id="username"
-            name="username"
-            required
-            fullWidth
-            placeholder="PocketPlayer"
-            autoComplete="username"
-            error={nameError}
-            helperText={nameErrorMessage}
-            onChange={handleChange}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
-          <TextField
-            id="email"
-            name="email"
-            required
-            fullWidth
-            placeholder="your@email.com"
-            autoComplete="email"
-            error={emailError}
-            helperText={emailErrorMessage}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="password">Password</FormLabel>
-          <TextField
-            id="password"
-            name="password"
-            type="password"
-            required
-            fullWidth
-            placeholder="••••••"
-            autoComplete="new-password"
-            error={passwordError}
-            helperText={passwordErrorMessage}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
-          <TextField
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            required
-            fullWidth
-            placeholder="••••••"
-            autoComplete="new-password"
-            error={passwordMatchError}
-            helperText={passwordMatchErrorMessage}
-            onChange={handleChange}
-          />
-        </FormControl>
-
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
+        <Typography
+            component="h1"
+            variant="h4"
+            sx={{ fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
         >
           Sign up
-        </Button>
-      </Box>
-
-      <Divider>
-        <Typography sx={{ color: 'text.secondary' }}>or</Typography>
-      </Divider>
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography sx={{ textAlign: 'center' }}>
-          Already have an account?{' '}
-          <Link href="/login" variant="body2">
-            Sign in
-          </Link>
         </Typography>
-      </Box>
-    </Card>
+
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          {existingAccountError && <Alert severity="error"> Username/Email already in use! </Alert>}
+
+          <FormControl>
+            <FormLabel htmlFor="username">Username</FormLabel>
+            <TextField
+                id="username"
+                name="username"
+                required
+                fullWidth
+                placeholder="PocketPlayer"
+                autoComplete="username"
+                error={nameError}
+                helperText={nameErrorMessage}
+                onChange={handleChange}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="email">Email</FormLabel>
+            <TextField
+                id="email"
+                name="email"
+                required
+                fullWidth
+                placeholder="your@email.com"
+                autoComplete="email"
+                error={emailError}
+                helperText={emailErrorMessage}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="password">Password</FormLabel>
+            <TextField
+                id="password"
+                name="password"
+                type="password"
+                required
+                fullWidth
+                placeholder="••••••"
+                autoComplete="new-password"
+                error={passwordError}
+                helperText={passwordErrorMessage}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
+            <TextField
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                fullWidth
+                placeholder="••••••"
+                autoComplete="new-password"
+                error={passwordMatchError}
+                helperText={passwordMatchErrorMessage}
+                onChange={handleChange}
+            />
+          </FormControl>
+
+          <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+          >
+            Sign up
+          </Button>
+        </Box>
+
+        <Divider>
+          <Typography sx={{ color: 'text.secondary' }}>or</Typography>
+        </Divider>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Typography sx={{ textAlign: 'center' }}>
+            Already have an account?{' '}
+            <Link href="/login" variant="body2">
+              Sign in
+            </Link>
+          </Typography>
+        </Box>
+      </Card>
   );
 }

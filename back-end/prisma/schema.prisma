@@ -60,7 +60,7 @@ model Card {
   defending Int
   physical  Int
 
-  playerFaceURL   String
+  playerImageURL  String
   setCode         String?
   collectorNumber String?
   inventoryItems  Inventory[]
