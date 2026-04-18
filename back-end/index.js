@@ -57,6 +57,11 @@ app.get("/api/community", async (req, res) => {
     const users = await prisma.user.findMany({
       where: {
         isPublic: true,
+        tradeList: {
+          some: {
+            status: "AVAILABLE",
+          },
+        },
       },
       select: {
         id: true,
