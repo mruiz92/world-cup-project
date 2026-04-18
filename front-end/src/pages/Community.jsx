@@ -25,9 +25,15 @@ const Community = () => {
       </Typography>
 
       <Stack spacing={4} sx={{ mt: 4 }}>
-        {users.map((user) => (
-          <UserTradeRow key={user.id} user={user} />
-        ))}
+        {users.length === 0 ? (
+          <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', py: 8 }}>
+            No users currently have cards listed for trade.
+          </Typography>
+        ) : (
+          users.map((user) => (
+            <UserTradeRow key={user.id} user={user} />
+          ))
+        )}
       </Stack>
     </Container>
   );
