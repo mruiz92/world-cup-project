@@ -78,7 +78,7 @@ const UserTradeRow = ({ user }) => {
               <CardMedia
                 component="img"
                 height="140"
-                image={item.card.playerFaceURL}
+                image={item.card.playerImageURL}
                 alt={item.card.short_name}
               />
               <Box sx={{ p: 1 }}>
