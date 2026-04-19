@@ -20,6 +20,8 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
 import { getTheme } from "../theme/theme";
+import { useMediaQuery, useTheme as useMuiTheme } from "@mui/material";
+
 import BackToTop from "../components/BackToTop";
 
 export default function AppLayout() {
@@ -34,6 +36,9 @@ export default function AppLayout() {
   const [user, setUser] = React.useState(null);
 
   const theme = React.useMemo(() => getTheme(mode), [mode]);
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(muiTheme.breakpoints.down('md'));
 
   const isPageAfterLogin = location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgot_password";
   const isHomePage = location.pathname === "/home";
@@ -106,19 +111,20 @@ export default function AppLayout() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-            gap: 2,
+            gap: isMobile ? 1 : 2,
             width: "100%",
-            py: 4,
+            py: isMobile ? 2 : 4,
+            px: isMobile ? 2 : 0,
           }}
         >
           <Box
             component="img"
-            sx={{ height: 60, width: "auto" }}
+            sx={{ height: isMobile ? 40 : 60, width: "auto" }}
             alt="Icon Left"
             src="../src/assets/SoccerBall.png"
           />
           <Typography
-            variant="h3"
+            variant={isMobile ? "h5" : "h3"}
             sx={{
               fontWeight: "bold",
               color: "text.primary",
@@ -130,36 +136,63 @@ export default function AppLayout() {
 
           <Box
             component="img"
-            sx={{ height: 60, width: "auto" }}
+            sx={{ height: isMobile ? 40 : 60, width: "auto" }}
             alt="Icon Right"
             src="../src/assets/SoccerBall.png"
           />
         </Box>
 
         {isPageAfterLogin && (
-          <Toolbar>
-            <Box sx={{ display: "flex", flex: 1 }}>
+          <Toolbar
+          sx={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: isMobile ? 2 : 0,
+            px: isMobile ? 2 : 1,
+            py: isMobile ? 2 : 1,
+          }}
+        >
+            <Box
+              sx={{
+                display: "flex",
+                flex: 1,
+                gap: isMobile ? 0.5 : 2,
+                flexWrap: "wrap",
+              }}
+            >
               <Button
-                sx={{ mr: 2 }}
+                sx={{
+                  mr: isMobile ? 0 : 2,
+                  fontSize: isMobile ? "0.75rem" : "1rem",
+                  padding: isMobile ? "4px 8px" : "6px 16px",
+                }}
                 color="inherit"
                 startIcon={<SportsSoccer />}
                 onClick={() => navigate("/home")}
               >
-                Home
-              </Button>
+                {!isMobile && "Home"}
+                </Button>
               <Button
-                sx={{ mr: 2 }}
+                sx={{
+                  mr: isMobile ? 0 : 2,
+                  fontSize: isMobile ? "0.75rem" : "1rem",
+                  padding: isMobile ? "4px 8px" : "6px 16px",
+                }}
                 color="inherit"
                 startIcon={<PeopleIcon />}
                 onClick={() => navigate("/community")}
               >
-                Community
+                {!isMobile && "Community"}
               </Button>
-              
+
               {isHomePage && (
                 <Button
                   color="inherit"
                   startIcon={<LibraryBooksIcon />}
+                  sx={{
+                    fontSize: isMobile ? "0.75rem" : "1rem",
+                    padding: isMobile ? "4px 8px" : "6px 16px",
+                  }}
                   onClick={() => {
                     window.dispatchEvent(
                       new CustomEvent("openPack", {
@@ -168,11 +201,12 @@ export default function AppLayout() {
                     );
                   }}
                 >
-                  Open Pack
+                  {!isMobile && "Open Pack"}
                 </Button>
               )}
             </Box>
 
+            {!isMobile && (
               <Typography
                 variant="h6"
                 component="div"
@@ -188,14 +222,31 @@ export default function AppLayout() {
                 <br />
                 {user ? user.currency : 0}
               </Typography>
+            )}
 
-            <Box sx={{ position: "relative"}}>
+            {isMobile && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                Funds: {user ? user.currency : 0}
+              </Typography>
+            )}
+
+            <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
               <Button
                 color="inherit"
                 onClick={handleProfileMenuOpen}
                 startIcon={<AccountCircle />}
+                sx={{
+                  fontSize: isMobile ? "0.75rem" : "1rem",
+                  padding: isMobile ? "4px 8px" : "6px 16px",
+                }}
               >
-                {user ? user.username : "Loading..."}
+                {!isMobile && (user ? user.username : "Loading...")}
               </Button>
               <Menu
                 anchorEl={profileMenuAnchor}
@@ -223,7 +274,7 @@ export default function AppLayout() {
               </Menu>
             </Box>
 
-            <IconButton onClick={toggleTheme} sx={{ ml: 2 }}>
+            <IconButton onClick={toggleTheme} sx={{ ml: isMobile ? 0 : 2 }}>
               {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
           </Toolbar>
