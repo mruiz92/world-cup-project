@@ -35,6 +35,9 @@ export default function AppLayout() {
 
   const theme = React.useMemo(() => getTheme(mode), [mode]);
 
+  const isPageAfterLogin = location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgot_password";
+  const isHomePage = location.pathname === "/home";
+
   const toggleTheme = () => {
     setMode((prev) => {
       const newMode = prev === "light" ? "dark" : "light";
@@ -45,14 +48,39 @@ export default function AppLayout() {
 
   React.useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-  }, []);
+    const token = localStorage.getItem("token");
+    
+    if (storedUser && token && isPageAfterLogin) {
+      fetchUserData(storedUser.id, token);
+    } else {
+      setUser(storedUser);
+    }
+  }, [isPageAfterLogin]);
+  
+  const fetchUserData = async (userId, token) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
 
   const handleProfileMenuOpen = (event) =>
     setProfileMenuAnchor(event.currentTarget);
+
   const handleProfileMenuClose = () => setProfileMenuAnchor(null);
 
   const handleLogout = () => {
+    setProfileMenuAnchor(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");
@@ -61,9 +89,6 @@ export default function AppLayout() {
   const handleAdminClick = () => {
     navigate("/admin");
   }
-
-  const isPageAfterLogin = location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgot_password";
-  const isHomePage = location.pathname === "/home";
 
   const gradient =
     mode === "light"
@@ -99,7 +124,6 @@ export default function AppLayout() {
               color: "text.primary",
               cursor: "pointer",
             }}
-            onClick={() => navigate("/home")}
           >
             Pocket Players
           </Typography>
@@ -113,11 +137,6 @@ export default function AppLayout() {
         </Box>
 
         {isPageAfterLogin && (
-          <AppBar
-          position="static"
-          elevation={0}
-          sx={{ borderBottom: "1px solid", borderColor: "divider" }}
-          >
           <Toolbar>
             <Box sx={{ display: "flex", flex: 1 }}>
               <Button
@@ -170,7 +189,7 @@ export default function AppLayout() {
                 {user ? user.currency : 0}
               </Typography>
 
-            <Box>
+            <Box sx={{ position: "relative"}}>
               <Button
                 color="inherit"
                 onClick={handleProfileMenuOpen}
@@ -182,6 +201,19 @@ export default function AppLayout() {
                 anchorEl={profileMenuAnchor}
                 open={Boolean(profileMenuAnchor)}
                 onClose={handleProfileMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                slotProps={{
+                  paper: {
+                    sx: { zIndex: 1301 }
+                  }
+                }}
               >
                 <MenuItem onClick={handleProfileMenuClose}>
                   Profile Page
@@ -195,7 +227,6 @@ export default function AppLayout() {
               {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
           </Toolbar>
-        </AppBar>
         )}
 
         <Box sx={{ flex: 1, width: "100%", display: "flex", justifyContent: "center" }}>
