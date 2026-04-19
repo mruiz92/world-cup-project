@@ -52,6 +52,39 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.get("/api/community", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        isPublic: true,
+        tradeList: {
+          some: {
+            status: "AVAILABLE",
+          },
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePic: true,
+        tradeList: {
+          where: {
+            status: "AVAILABLE",
+          },
+          include: {
+            card: true,
+          },
+        },
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("An error occurred while fetching community data.");
+  }
+});
+
 app.post("/login", async (req, res) => {
   const {username, password} = req.body;
 
@@ -93,9 +126,9 @@ app.post("/login", async (req, res) => {
     const authenticateToken = (req, res, next) => {
       const authHeader = req.headers['authorization'];
       const token = authHeader && authHeader.split(' ')[1];
-    
+
       if (!token) return res.status(401).json({ok: false, message: "No token provided"});
-    
+
       jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ok: false, message: "Invalid token"});
         req.user = user;
