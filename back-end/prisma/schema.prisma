@@ -29,15 +29,6 @@ model User {
   tradeList  TradeList[]
 }
 
-model Token {
-  Token_id  Int       @id @default(autoincrement())
-  userId    Int
-  token     String
-  createdAt DateTime  @default(now())
-  expiredAt DateTime?
-  User      User      @relation(fields: [userId], references: [id])
-}
-
 model Card {
   id          Int    @id @default(autoincrement())
   short_name  String
