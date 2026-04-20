@@ -273,6 +273,8 @@ app.post("/api/sell-card", async (req, res) => {
         await tx.inventory.delete({
           where: { id: inventoryItem.id },
         });
+
+        await tx.tradeList.deleteMany({ where: { userId, cardId } });
       }
       return updatedUser;
     });
