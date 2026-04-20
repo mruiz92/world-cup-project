@@ -43,7 +43,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 export default function Home() {
   const navigate = useNavigate();
-  const userId = 1; //Replace with current userId
   const [user, setUser] = React.useState(null);
   const [inventory, setInventory] = React.useState([]);
   const [profileMenuAnchor, setProfileMenuAnchor] = React.useState(null);
@@ -56,20 +55,44 @@ export default function Home() {
   const [cardPackMessage, setCardPackMessage] = React.useState("");
 
   React.useEffect(() => {
+    const handleOpenPack = (event) => {
+      const { packSize, packCost } = event.detail;
+      handleOpenCardPack(packSize, packCost);
+    };
+
+    window.addEventListener("openPack", handleOpenPack);
+    return () => window.removeEventListener("openPack", handleOpenPack);
+  }, [user]);
+  
+  React.useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/users/${userId}`);
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        
+        if (!storedUser || !storedUser.id) {
+          navigate("/login");
+          return;
+        }
+    
+        const response = await fetch(`http://localhost:4000/users/${storedUser.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         const data = await response.json();
+        
         if (response.ok) {
           setUser(data);
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
-        navigate("/register");
+        navigate("/login");
       }
     };
+    
     fetchUser();
-  }, [userId, navigate]);
+  }, [navigate]);
 
   React.useEffect(() => {
     const midnight = new Date();
@@ -219,104 +242,6 @@ export default function Home() {
       sx={{ minHeight: "100vh", width: "75%", bgcolor: "background.default" }}
     >
       <Box sx={{ position: "relative", overflow: "hidden" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-            width: "100%",
-            py: 4,
-          }}
-        >
-          <Box
-            component="img"
-            sx={{ height: 60, width: "auto" }}
-            alt="Icon Left"
-            src="../src/assets/SoccerBall.png"
-          />
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: "bold",
-              color: "text.primary",
-            }}
-          >
-            Pocket Players
-          </Typography>
-
-          <Box
-            component="img"
-            sx={{ height: 60, width: "auto" }}
-            alt="Icon Right"
-            src="../src/assets/SoccerBall.png"
-          />
-        </Box>
-        <AppBar
-          position="static"
-          elevation={0}
-          sx={{ borderBottom: "1px solid", borderColor: "divider" }}
-        >
-          <Toolbar>
-            <Box sx={{ display: "flex", flex: 1 }}>
-              <Button
-                sx={{ mr: 2 }}
-                color="inherit"
-                startIcon={<PeopleIcon />}
-                onClick={() => navigate("/community")}
-              >
-                Community
-              </Button>
-              <Button
-                color="inherit"
-                startIcon={<LibraryBooksIcon />}
-                onClick={() => handleOpenCardPack(5, 10000)}
-              >
-                Open Pack <br/>(10,000)
-              </Button>
-            </Box>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                fontWeight: "bold",
-                textAlign: "center",
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
-              Total Funds
-              <br />
-              {user ? user.currency : 0}
-            </Typography>
-
-            <Box>
-              <Button
-                color="inherit"
-                onClick={handleProfileMenuOpen}
-                startIcon={<AccountCircle />}
-                sx={{ display: "flex", flex: 1, justifyContent: "flex-end" }}
-              >
-                {user ? user.username : "Loading..."}
-              </Button>
-              <Menu
-                anchorEl={profileMenuAnchor}
-                open={open}
-                onClose={handleProfileMenuClose}
-              >
-                <MenuItem onClick={handleProfileMenuClose}>
-                  Profile Page
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/register")}>
-                  Logout
-                </MenuItem>
-              </Menu>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
         <Box sx={{ p: 4 }}>
           {nationalities.map((nation) => (
             <Box key={nation} sx={{ mb: 6 }}>
