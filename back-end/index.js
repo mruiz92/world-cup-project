@@ -192,6 +192,20 @@ app.get("/api/inventory/:id", async (req, res) => {
   }
 });
 
+app.post("/api/trade-list/add", async (req, res) => {
+  const { userId, cardId } = req.body;
+  try {
+    await prisma.tradeList.upsert({
+      where: { userId_cardId: { userId, cardId } },
+      update: { status: "AVAILABLE" },
+      create: { userId, cardId, status: "AVAILABLE" },
+    });
+    res.status(200).json({ message: "Added" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to list" });
+  }
+});
+
 app.post("/api/open-pack", async (req, res) => {
   try {
     const { userId, packSize, packCost } = req.body;
