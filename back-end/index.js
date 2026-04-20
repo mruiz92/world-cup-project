@@ -241,6 +241,9 @@ app.post("/login", async (req, res) => {
 app.get("/admin/users", async (req, res) => {
   try {
     const users = await prisma.user.findMany({
+      where: {
+        isAdmin: false,
+      },
       select: {
         id: true,
         username: true,
@@ -248,12 +251,23 @@ app.get("/admin/users", async (req, res) => {
         profilePic: true,
       },
     });
-    
-    console.log("Users found:", users);
     res.status(200).json(users);
   } catch (error) {
-    console.error(error);
     res.status(500).json("An error occurred while fetching users.");
+  }
+});
+
+app.get("/admin/banned-emails", async (req, res) => {
+  try {
+    const bannedEmails = await prisma.bannedEmail.findMany({
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+    res.status(200).json(bannedEmails || []);
+  } catch (error) {
+    res.status(500).json("An error occurred while fetching banned emails.");
   }
 });
 
@@ -266,7 +280,7 @@ app.delete("/admin/users/:id", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json("User not found.");
+      return res.status(404).json({ error: "User not found." });
     }
 
     await prisma.bannedEmail.create({
@@ -278,11 +292,10 @@ app.delete("/admin/users/:id", async (req, res) => {
     await prisma.user.delete({
       where: { id: parseInt(id) },
     });
-
-    res.status(200).json("User banned successfully.");
+    
+    res.status(200).json({ message: "User banned successfully." });
   } catch (error) {
-    console.error(error);
-    res.status(500).json("An error occurred while banning the user.");
+    res.status(500).json({ error: "An error occurred while banning the user." });
   }
 });
 
