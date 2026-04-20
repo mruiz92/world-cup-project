@@ -21,7 +21,10 @@ import PeopleIcon from "@mui/icons-material/People";
 import StyleIcon from "@mui/icons-material/Style";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import { useNavigate } from "react-router-dom";
+import { 
+  useNavigate,
+  useOutletContext,
+ } from "react-router-dom";
 import {
   Dialog,
   DialogTitle,
@@ -43,7 +46,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 export default function Home() {
   const navigate = useNavigate();
-  const [user, setUser] = React.useState(null);
+  const { user: contextUser, setUser: setContextUser } = useOutletContext();
+  const [user, setUser] = React.useState(contextUser);
   const [inventory, setInventory] = React.useState([]);
   const [profileMenuAnchor, setProfileMenuAnchor] = React.useState(null);
   const [openCards, setOpenCards] = React.useState([]);
@@ -118,8 +122,6 @@ export default function Home() {
   }, [user?.id, user?.currency]);
 
   const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
-    // Check if user is loaded
-
     if (!user) return;
     try {
       const response = await fetch("http://localhost:4000/api/open-pack", {
@@ -135,25 +137,26 @@ export default function Home() {
       const data = await response.json();
 
       if (response.ok) {
-        // Set the new cards to modal
         setOpenCards(data.cards);
-        // Open popup
         setIsModalOpen(true);
-        // Re-fetch inventory to show the new cards
-        const invRes = await fetch(
-          `http://localhost:4000/api/inventory/${user.id}`,
-        );
+        
+        const invRes = await fetch(`http://localhost:4000/api/inventory/${user.id}`);
         const invData = await invRes.json();
         setInventory(invData);
-        if( packCost > 0 ) {
+        
+        if (packCost > 0) {
           setCardPackMessage("New Pack Opened!");
         }
-        setUser((prev) => ({
-          ...prev,
+        
+        // Update BOTH local and context user
+        const updatedUser = {
+          ...user,
           currency: data.newCurrency,
-        }));
+        };
+        setUser(updatedUser);
+        setContextUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        // Handle errors
         alert(data.error || "Something went wrong opening the pack.");
       }
     } catch (error) {
@@ -178,13 +181,16 @@ export default function Home() {
       });
 
       if (response.ok) {
-        // Update Currency
         const data = await response.json();
 
-        setUser((prev) => ({
-          ...prev,
+        // Update BOTH local state and context
+        const updatedUser = {
+          ...user,
           currency: data.newCurrency,
-        }));
+        };
+        setUser(updatedUser);
+        setContextUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
 
         // Update Inventory UI
         setInventory((prev) => {
