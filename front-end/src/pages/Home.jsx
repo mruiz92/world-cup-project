@@ -237,6 +237,28 @@ export default function Home() {
     setSelectedCardMenuItem(null);
   };
 
+  const handleToggleTrade = async (item) => {
+    const endpoint = item.isForTrade ? "remove" : "add";
+    
+    try {
+      const response = await fetch(`http://localhost:4000/api/trade-list/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, cardId: item.card.id }),
+      });
+  
+      if (response.ok) {
+        setInventory((prev) =>
+          prev.map((invItem) =>
+            invItem.id === item.id ? { ...invItem, isForTrade: !item.isForTrade } : invItem
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Trade toggle error:", error);
+    }
+  };
+
   return (
     <Box
       sx={{ minHeight: "100vh", width: "75%", bgcolor: "background.default" }}
@@ -411,9 +433,11 @@ export default function Home() {
         <MenuItem
           onClick={() => {
             handleCardMenuClose();
+            handleToggleTrade(selectedCardMenuItem);
           }}
         >
-          <InventoryIcon sx={{ mr: 1, fontSize: "small" }} /> Trade
+          <InventoryIcon sx={{ mr: 1, fontSize: "small" }} />
+          {selectedCardMenuItem?.isForTrade ? "Remove from Trade List" : "List for Trade"}
         </MenuItem>
 
         <MenuItem
