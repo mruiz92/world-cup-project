@@ -47,7 +47,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 export default function Home() {
   const navigate = useNavigate();
   const { user: contextUser, setUser: setContextUser } = useOutletContext();
-  const [user, setUser] = React.useState(contextUser);
+  const [user, setUser] = React.useState(null);
   const [inventory, setInventory] = React.useState([]);
   const [profileMenuAnchor, setProfileMenuAnchor] = React.useState(null);
   const [openCards, setOpenCards] = React.useState([]);
@@ -59,70 +59,17 @@ export default function Home() {
   const [cardPackMessage, setCardPackMessage] = React.useState("");
 
   React.useEffect(() => {
-    const handleOpenPack = (event) => {
-      const { packSize, packCost } = event.detail;
-      handleOpenCardPack(packSize, packCost);
-    };
-
-    window.addEventListener("openPack", handleOpenPack);
-    return () => window.removeEventListener("openPack", handleOpenPack);
-  }, [user]);
-  
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        const token = localStorage.getItem('token');
-        
-        if (!storedUser || !storedUser.id) {
-          navigate("/login");
-          return;
-        }
-    
-        const response = await fetch(`http://localhost:4000/users/${storedUser.id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
-        
-        if (response.ok) {
-          setUser(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        navigate("/login");
-      }
-    };
-    
-    fetchUser();
-  }, [navigate]);
-
-  React.useEffect(() => {
-    const midnight = new Date();
-    midnight.setHours(0, 0, 0, 0);
-
-    if (user && user.id) {
-      fetch(`http://localhost:4000/api/inventory/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setInventory(data);
-
-          if (data.length === 0 && user.currency === 0) {
-            setCardPackMessage("Welcome Starter Pack!");
-            handleOpenCardPack(10, 0);
-          }
-          else if (data.length > 0 && user.lastDailyPack < midnight) {
-            setCardPackMessage("Free Daily Pack!");
-            handleOpenCardPack(5, 0)
-          }
-        })
-        .catch((err) => console.error("Error loading inventory:", err));
+    if (contextUser) {
+      setUser(contextUser);
     }
-  }, [user?.id, user?.currency]);
+  }, [contextUser]);
 
-  const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
-    if (!user) return;
+  const handleOpenCardPack = React.useCallback(async (packSize = 5, packCost = 0) => {
+    if (!user || !user.id) {
+      console.log("User not available for pack opening");
+      return;
+    }
+    
     try {
       const response = await fetch("http://localhost:4000/api/open-pack", {
         method: "POST",
@@ -138,20 +85,23 @@ export default function Home() {
 
       if (response.ok) {
         setOpenCards(data.cards);
-        setIsModalOpen(true);
+        if (packSize === 10) {
+          setCardPackMessage("Welcome Starter Pack!");
+        } else if (packCost > 0) {
+          setCardPackMessage("5-Card Pack");
+        } else {
+          setCardPackMessage("Free Daily Pack!");
+        }        setIsModalOpen(true);
         
         const invRes = await fetch(`http://localhost:4000/api/inventory/${user.id}`);
         const invData = await invRes.json();
         setInventory(invData);
         
-        if (packCost > 0) {
-          setCardPackMessage("New Pack Opened!");
-        }
-        
         // Update BOTH local and context user
         const updatedUser = {
           ...user,
           currency: data.newCurrency,
+          lastDailyPack: new Date().toISOString(),
         };
         setUser(updatedUser);
         setContextUser(updatedUser);
@@ -163,7 +113,52 @@ export default function Home() {
       console.error("Fetch error:", error);
       alert("Could not connect to the server.");
     }
-  };
+  }, [user?.id, setContextUser]);
+
+  React.useEffect(() => {
+    const handleOpenPack = (event) => {
+      const { packSize, packCost } = event.detail;
+      handleOpenCardPack(packSize, packCost);
+    };
+
+    window.addEventListener("openPack", handleOpenPack);
+    return () => window.removeEventListener("openPack", handleOpenPack);
+  }, [handleOpenCardPack]);
+  
+  // Load inventory and trigger welcome/daily packs
+  React.useEffect(() => {
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+
+    if (user && user.id) {
+      fetch(`http://localhost:4000/api/inventory/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setInventory(data);
+
+          // Welcome pack: new user with empty inventory and 0 currency
+          if (data.length === 0 && user.currency === 0) {
+            console.log("Opening welcome pack for new user");
+            setCardPackMessage("Welcome Starter Pack!");
+            handleOpenCardPack(10, 0);
+          }
+
+          // // Daily pack: user has items and last pack was before today's midnight
+          else if (data.length > 0 && user.lastDailyPack) {
+            const lastPack = new Date(user.lastDailyPack);
+            lastPack.setHours(0, 0, 0, 0);
+            
+            if (lastPack < midnight) {
+              console.log("Opening daily pack - new day");
+              setCardPackMessage("Free Daily Pack!");
+              handleOpenCardPack(5, 0);
+            }
+          }
+        })
+        .catch((err) => console.error("Error loading inventory:", err));
+    }
+  }, [user?.id, user?.currency, handleOpenCardPack]);
+
 
   const handleSellCard = async (item) => {
     // Calculate sell price (Rating squared)
