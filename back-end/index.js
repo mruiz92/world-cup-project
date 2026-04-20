@@ -1,9 +1,10 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client')
+const { withAccelerate } = require('@prisma/extension-accelerate');
 const { openCardPack } = require("./src/openCardPack.ts");
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends(withAccelerate())
 
 const express = require("express");
 const cors = require("cors");
@@ -25,6 +26,14 @@ app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
+    const bannedEmail = await prisma.bannedEmail.findFirst({
+      where: { email: email },
+    });
+
+    if (bannedEmail) {
+      return res.status(400).json("This email has been banned from the platform.");
+    }
+
     const existingUser = await prisma.user.findFirst({
       where: { email: email },
     });
@@ -229,5 +238,65 @@ app.post("/login", async (req, res) => {
       res.status(500).json({ error: "Failed to process sale" });
     }
   });
+app.get("/admin/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        isAdmin: false,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        profilePic: true,
+      },
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json("An error occurred while fetching users.");
+  }
+});
+
+app.get("/admin/banned-emails", async (req, res) => {
+  try {
+    const bannedEmails = await prisma.bannedEmail.findMany({
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+    res.status(200).json(bannedEmails || []);
+  } catch (error) {
+    res.status(500).json("An error occurred while fetching banned emails.");
+  }
+});
+
+app.delete("/admin/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    await prisma.bannedEmail.create({
+      data: {
+        email: user.email,
+      },
+    });
+
+    await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
+    
+    res.status(200).json({ message: "User banned successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while banning the user." });
+  }
+});
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));

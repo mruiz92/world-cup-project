@@ -269,7 +269,9 @@ export default function AppLayout() {
                 <MenuItem onClick={handleProfileMenuClose}>
                   Profile Page
                 </MenuItem>
-                <MenuItem onClick={handleAdminClick}>Admin</MenuItem>
+                {user?.isAdmin && (
+                  <MenuItem onClick={handleAdminClick}>Admin</MenuItem>
+                )}
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </Box>

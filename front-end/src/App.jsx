@@ -4,7 +4,8 @@ import AppLayout from "./layouts/AppLayout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
-import Home from "./pages/Home";
+import Home from './pages/Home';
+import Admin from "./pages/Admin";
 import Community from "./pages/Community";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/forgot_password" element={<ForgotPassword />} />
           <Route path="/home" element={<Home />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
       </Routes>
     </BrowserRouter>
