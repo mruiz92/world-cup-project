@@ -52,7 +52,18 @@ export default function Home() {
   const [cardMenuAnchor, setCardMenuAnchor] = React.useState(null);
   const [selectedCardMenuItem, setSelectedCardMenuItem] = React.useState(null);
   const [isSellDialogOpen, setIsSellDialogOpen] = React.useState(false);
+  const [cardPackMessage, setCardPackMessage] = React.useState("");
 
+  React.useEffect(() => {
+    const handleOpenPack = (event) => {
+      const { packSize, packCost } = event.detail;
+      handleOpenCardPack(packSize, packCost);
+    };
+
+    window.addEventListener("openPack", handleOpenPack);
+    return () => window.removeEventListener("openPack", handleOpenPack);
+  }, [user]);
+  
   React.useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -84,6 +95,9 @@ export default function Home() {
   }, [navigate]);
 
   React.useEffect(() => {
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+
     if (user && user.id) {
       fetch(`http://localhost:4000/api/inventory/${user.id}`)
         .then((res) => res.json())
@@ -91,7 +105,12 @@ export default function Home() {
           setInventory(data);
 
           if (data.length === 0 && user.currency === 0) {
+            setCardPackMessage("Welcome Starter Pack!");
             handleOpenCardPack(10, 0);
+          }
+          else if (data.length > 0 && user.lastDailyPack < midnight) {
+            setCardPackMessage("Free Daily Pack!");
+            handleOpenCardPack(5, 0)
           }
         })
         .catch((err) => console.error("Error loading inventory:", err));
@@ -100,8 +119,8 @@ export default function Home() {
 
   const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
     // Check if user is loaded
-    if (!user) return;
 
+    if (!user) return;
     try {
       const response = await fetch("http://localhost:4000/api/open-pack", {
         method: "POST",
@@ -126,6 +145,13 @@ export default function Home() {
         );
         const invData = await invRes.json();
         setInventory(invData);
+        if( packCost > 0 ) {
+          setCardPackMessage("New Pack Opened!");
+        }
+        setUser((prev) => ({
+          ...prev,
+          currency: data.newCurrency,
+        }));
       } else {
         // Handle errors
         alert(data.error || "Something went wrong opening the pack.");
@@ -216,104 +242,6 @@ export default function Home() {
       sx={{ minHeight: "100vh", width: "75%", bgcolor: "background.default" }}
     >
       <Box sx={{ position: "relative", overflow: "hidden" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-            width: "100%",
-            py: 4,
-          }}
-        >
-          <Box
-            component="img"
-            sx={{ height: 60, width: "auto" }}
-            alt="Icon Left"
-            src="../src/assets/SoccerBall.png"
-          />
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: "bold",
-              color: "text.primary",
-            }}
-          >
-            Pocket Players
-          </Typography>
-
-          <Box
-            component="img"
-            sx={{ height: 60, width: "auto" }}
-            alt="Icon Right"
-            src="../src/assets/SoccerBall.png"
-          />
-        </Box>
-        <AppBar
-          position="static"
-          elevation={0}
-          sx={{ borderBottom: "1px solid", borderColor: "divider" }}
-        >
-          <Toolbar>
-            <Box sx={{ display: "flex", flex: 1 }}>
-              <Button
-                sx={{ mr: 2 }}
-                color="inherit"
-                startIcon={<PeopleIcon />}
-                onClick={() => navigate("/community")}
-              >
-                Community
-              </Button>
-              <Button
-                color="inherit"
-                startIcon={<LibraryBooksIcon />}
-                onClick={() => handleOpenCardPack(5, 0)}
-              >
-                Open Pack
-              </Button>
-            </Box>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                fontWeight: "bold",
-                textAlign: "center",
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
-              Total Funds
-              <br />
-              {user ? user.currency : 0}
-            </Typography>
-
-            <Box>
-              <Button
-                color="inherit"
-                onClick={handleProfileMenuOpen}
-                startIcon={<AccountCircle />}
-                sx={{ display: "flex", flex: 1, justifyContent: "flex-end" }}
-              >
-                {user ? user.username : "Loading..."}
-              </Button>
-              <Menu
-                anchorEl={profileMenuAnchor}
-                open={open}
-                onClose={handleProfileMenuClose}
-              >
-                <MenuItem onClick={handleProfileMenuClose}>
-                  Profile Page
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/register")}>
-                  Logout
-                </MenuItem>
-              </Menu>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
         <Box sx={{ p: 4 }}>
           {nationalities.map((nation) => (
             <Box key={nation} sx={{ mb: 6 }}>
@@ -419,9 +347,7 @@ export default function Home() {
             }}
           >
             <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
-              {openCards.length > 5
-                ? "Welcome Starter Pack!"
-                : "New Pack Opened!"}
+              {cardPackMessage}
             </Typography>
 
             <Grid container spacing={2} justifyContent="center">

@@ -278,11 +278,6 @@ app.post("/api/open-pack", async (req, res) => {
     };
     // Return the new cards to the frontend
     res.json(result);
-  } catch (error) {
-    console.error("Pack Opening Error:", error.message);
-    res.status(400).json({ error: error.message });
-  }
-});
 
 app.get("/admin/banned-emails", async (req, res) => {
   try {
