@@ -168,14 +168,22 @@ app.get("/api/inventory/:id", async (req, res) => {
   const userId = parseInt(req.params.id);
 
   try {
-    const inventory = await prisma.inventory.findMany({
-      where: {
-        userId: userId,
-      },
-      include: {
-        card: true,
-      },
+    let inventory = await prisma.inventory.findMany({
+      where: { userId: userId },
+      include: { card: true },
     });
+
+    const tradeList = await prisma.tradeList.findMany({
+      where: { userId: userId, status: "AVAILABLE" },
+      select: { cardId: true }
+    });
+
+    const tradeCardIds = new Set(tradeList.map(t => t.cardId));
+
+    inventory = inventory.map(item => ({
+      ...item,
+      isForTrade: tradeCardIds.has(item.cardId)
+    }));
 
     res.json(inventory);
   } catch (error) {
