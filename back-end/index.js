@@ -67,7 +67,6 @@ app.get("/api/community", async (req, res) => {
   try {
     const users = await prisma.user.findMany({
       where: {
-        isPublic: true,
         tradeList: {
           some: {
             status: "AVAILABLE",
@@ -88,7 +87,6 @@ app.get("/api/community", async (req, res) => {
         },
       },
     });
-
     res.json(users);
   } catch (error) {
     console.error(error);
