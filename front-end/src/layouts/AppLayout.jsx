@@ -4,17 +4,19 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import PeopleIcon from "@mui/icons-material/People";
+import MailIcon from "@mui/icons-material/Mail";
 import SportsSoccer from "@mui/icons-material/SportsSoccer";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -34,11 +36,11 @@ export default function AppLayout() {
 
   const [profileMenuAnchor, setProfileMenuAnchor] = React.useState(null);
   const [user, setUser] = React.useState(null);
+  const [snackbar, setSnackbar] = React.useState({ open: false, message: "", severity: "error" });
 
   const theme = React.useMemo(() => getTheme(mode), [mode]);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(muiTheme.breakpoints.down('md'));
 
   const isPageAfterLogin = location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgot_password";
   const isHomePage = location.pathname === "/home";
@@ -97,12 +99,16 @@ export default function AppLayout() {
 
   const handleBuyPackClick = () => {
     if (!user) {
-      alert("User data not loaded");
+      setSnackbar({ open: true, message: "User data not loaded", severity: "error" });
       return;
     }
 
     if (user.currency < 10000) {
-      alert(`Insufficient funds! You need 10,000 currency but only have ${user.currency}.`);
+      setSnackbar({ 
+        open: true, 
+        message: `Insufficient funds! You need 10,000 currency but only have ${user.currency}.`, 
+        severity: "error" 
+      });
       return;
     }
 
@@ -111,6 +117,11 @@ export default function AppLayout() {
         detail: { packSize: 5, packCost: 10000 },
       })
     );
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
   };
 
   const gradient =
@@ -123,6 +134,7 @@ export default function AppLayout() {
       <CssBaseline />
 
       <Stack sx={{ minHeight: "100vh", width: "100%", background: gradient }}>
+        {/* Logo Section */}
         <Box
           sx={{
             display: "flex",
@@ -133,6 +145,11 @@ export default function AppLayout() {
             width: "100%",
             py: isMobile ? 2 : 4,
             px: isMobile ? 2 : 0,
+            bgcolor: mode === "light" ? "#ffffff" : "#1a1a1a",
+            borderBottom: mode === "light" ? "1px solid #e0e0e0" : "1px solid #333333",
+            boxShadow: mode === "light" 
+              ? "0 2px 8px rgba(0, 0, 0, 0.1)" 
+              : "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
           <Box
@@ -162,14 +179,19 @@ export default function AppLayout() {
 
         {isPageAfterLogin && (
           <Toolbar
-          sx={{
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            gap: isMobile ? 2 : 0,
-            px: isMobile ? 2 : 1,
-            py: isMobile ? 2 : 1,
-          }}
-        >
+            sx={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? 2 : 0,
+              px: isMobile ? 2 : 1,
+              py: isMobile ? 2 : 1,
+              bgcolor: mode === "light" ? "#f5f5f5" : "#0d0d0d",
+              borderBottom: mode === "light" ? "1px solid #e0e0e0" : "1px solid #333333",
+              boxShadow: mode === "light" 
+                ? "0 2px 4px rgba(0, 0, 0, 0.1)" 
+                : "0 2px 4px rgba(0, 0, 0, 0.3)",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -189,7 +211,7 @@ export default function AppLayout() {
                 onClick={() => navigate("/home")}
               >
                 {!isMobile && "Home"}
-                </Button>
+              </Button>
               <Button
                 sx={{
                   mr: isMobile ? 0 : 2,
@@ -201,6 +223,18 @@ export default function AppLayout() {
                 onClick={() => navigate("/community")}
               >
                 {!isMobile && "Community"}
+              </Button>
+              <Button
+                sx={{
+                  mr: isMobile ? 0 : 2,
+                  fontSize: isMobile ? "0.75rem" : "1rem",
+                  padding: isMobile ? "4px 8px" : "6px 16px",
+                }}
+                color="inherit"
+                startIcon={<MailIcon />}
+                onClick={() => navigate("/trade-requests")}
+              >
+                {!isMobile && "Trade Requests"}
               </Button>
 
               {isHomePage && (
@@ -225,9 +259,7 @@ export default function AppLayout() {
                 sx={{
                   fontWeight: "bold",
                   textAlign: "center",
-                  position: "absolute",
-                  left: "50%",
-                  transform: "translateX(-50%)",
+                  mr: 3,
                 }}
               >
                 Total Funds
@@ -297,6 +329,21 @@ export default function AppLayout() {
         <Box sx={{ flex: 1, width: "100%", display: "flex", justifyContent: "center" }}>
           <Outlet context={{ user, setUser }} />
         </Box>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
 
         <BackToTop />
       </Stack>

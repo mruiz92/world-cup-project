@@ -7,6 +7,7 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import Home from './pages/Home';
 import Admin from "./pages/Admin";
 import Community from "./pages/Community";
+import TradeRequests from "./pages/TradeRequests.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/forgot_password" element={<ForgotPassword />} />
           <Route path="/home" element={<Home />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/trade-requests" element={<TradeRequests />} />
           <Route path="/admin" element={<Admin />} />
         </Route>
       </Routes>
