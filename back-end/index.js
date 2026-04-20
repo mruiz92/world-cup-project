@@ -206,6 +206,18 @@ app.post("/api/trade-list/add", async (req, res) => {
   }
 });
 
+app.post("/api/trade-list/remove", async (req, res) => {
+  const { userId, cardId } = req.body;
+  try {
+    await prisma.tradeList.delete({
+      where: { userId_cardId: { userId, cardId } },
+    });
+    res.status(200).json({ message: "Removed" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to remove" });
+  }
+});
+
 app.post("/api/open-pack", async (req, res) => {
   try {
     const { userId, packSize, packCost } = req.body;
