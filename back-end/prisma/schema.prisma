@@ -8,10 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
+/*datasource db {
   provider = "postgresql"
   url       = env("DIRECT_URL")    // app uses Accelerate
   directUrl = env("DATABASE_URL")  // migrations & Studio use direct
+}*/
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -28,6 +32,7 @@ model User {
   createdAt     DateTime       @default(now())
   Inventory     Inventory[]
   tradeList     TradeList[]
+  tradeOffer    TradeOffer[]
 }
 
 model BannedEmail {
@@ -63,6 +68,7 @@ model Card {
   collectorNumber String?
   inventoryItems  Inventory[]
   tradeList       TradeList[]
+  tradeOffers     TradeOffer[]
 }
 
 model Inventory {
@@ -77,15 +83,35 @@ model Inventory {
 }
 
 model TradeList {
-  id       Int         @id @default(autoincrement())
-  userId   Int
-  user     User        @relation(fields: [userId], references: [id])
-  cardId   Int
-  card     Card        @relation(fields: [cardId], references: [id])
-  quantity Int         @default(1)
-  status   TradeStatus @default(AVAILABLE)
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  user      User          @relation(fields: [userId], references: [id])
+  cardId    Int
+  card      Card          @relation(fields: [cardId], references: [id])
+  status    TradeStatus   @default(AVAILABLE)
+  createdAt DateTime      @default(now())
+  
+  // Relation to incoming offers
+  tradeOffers    TradeOffer[]
+}
 
-  @@unique([userId, cardId])
+model TradeOffer {
+  id             Int         @id @default(autoincrement())
+  tradeListId    Int         // The specific listing being bid on
+  offeringUserId Int         // Who is making the offer
+  offeredCardId  Int         // Which card they are giving up
+  status         OfferStatus @default(PENDING)
+  createdAt      DateTime    @default(now())
+
+  tradeList    TradeList @relation(fields: [tradeListId], references: [id], onDelete: Cascade)
+  offeringUser User      @relation(fields: [offeringUserId], references: [id])
+  offeredCard  Card      @relation(fields: [offeredCardId], references: [id])
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum TradeStatus {

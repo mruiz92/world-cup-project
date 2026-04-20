@@ -169,8 +169,27 @@ app.post("/login", async (req, res) => {
           card: true,
         },
       });
+      const tradeCounts = await prisma.tradeList.groupBy({
+        by: ['cardId'],
+        where: {
+          userId: parseInt(userId),
+          status: { in: ['AVAILABLE', 'PENDING'] }
+        },
+        _count: {
+          cardId: true
+        }
+      });
+      const processedInventory = inventory.map(item => {
+      const listedEntry = tradeCounts.find(t => t.cardId === item.cardId);
+      const listedCount = listedEntry ? listedEntry._count.cardId : 0;
+      
+      return {
+        ...item,
+        displayQuantity: item.quantity - listedCount 
+      };
+    });
 
-      res.json(inventory);
+    res.json(processedInventory);
     } catch (error) {
       console.error("Prisma Error:", error);
       res.status(500).json({ error: "Failed to fetch inventory" });
@@ -238,6 +257,51 @@ app.post("/login", async (req, res) => {
       res.status(500).json({ error: "Failed to process sale" });
     }
   });
+  app.post("/api/trade/list", async (req, res) => {
+  const { userId, cardId, quantity } = req.body;
+  const requestedQty = parseInt(quantity);
+  const uId = parseInt(userId);
+  const cId = parseInt(cardId);
+
+  try {
+    const inventoryItem = await prisma.inventory.findUnique({
+      where: { userId_cardId: { userId: uId, cardId: cId } },
+    });
+
+    if (!inventoryItem) {
+      return res.status(400).json({ error: "You do not own this card." });
+    }
+
+    const alreadyListedCount = await prisma.tradeList.count({
+      where: {
+        userId: uId,
+        cardId: cId,
+        status: { in: ["AVAILABLE", "PENDING"] },
+      },
+    });
+    const remainingToList = inventoryItem.quantity - alreadyListedCount;
+
+    if (requestedQty > remainingToList) {
+      return res.status(400).json({ 
+        error: `Limit reached. You own ${inventoryItem.quantity} copies, and ${alreadyListedCount} are already listed.` 
+      });
+    }
+    const tradeEntries = Array(requestedQty).fill({
+      userId: uId,
+      cardId: cId,
+      status: "AVAILABLE",
+    });
+
+    await prisma.tradeList.createMany({
+      data: tradeEntries,
+    });
+
+    res.status(200).json({ message: "Successfully added to Trade List." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.get("/admin/users", async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -256,7 +320,36 @@ app.get("/admin/users", async (req, res) => {
     res.status(500).json("An error occurred while fetching users.");
   }
 });
+app.delete("/api/trade/unlist", async (req, res) => {
+  const { userId, cardId, quantity } = req.body;
 
+  try {
+    const listingsToRemove = await prisma.tradeList.findMany({
+      where: {
+        userId: parseInt(userId),
+        cardId: parseInt(cardId),
+        status: 'AVAILABLE',
+      },
+      take: parseInt(quantity),
+      select: { id: true }
+    });
+
+    if (listingsToRemove.length < quantity) {
+      return res.status(400).json({ error: "Not enough available listings to remove." });
+    }
+
+    await prisma.tradeList.deleteMany({
+      where: {
+        id: { in: listingsToRemove.map(l => l.id) }
+      }
+    });
+
+    res.json({ message: `Successfully unlisted ${quantity} card(s).` });
+  } catch (error) {
+    console.error("Unlist Error:", error);
+    res.status(500).json({ error: "Failed to unlist cards." });
+  }
+});
 app.get("/admin/banned-emails", async (req, res) => {
   try {
     const bannedEmails = await prisma.bannedEmail.findMany({

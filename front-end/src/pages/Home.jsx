@@ -4,6 +4,7 @@ import {
   Box,
   Toolbar,
   Typography,
+  TextField,
   Button,
   Menu,
   MenuItem,
@@ -21,6 +22,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import StyleIcon from "@mui/icons-material/Style";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { 
   useNavigate,
   useOutletContext,
@@ -57,6 +59,10 @@ export default function Home() {
   const [selectedCardMenuItem, setSelectedCardMenuItem] = React.useState(null);
   const [isSellDialogOpen, setIsSellDialogOpen] = React.useState(false);
   const [cardPackMessage, setCardPackMessage] = React.useState("");
+  const [isTradeDialogOpen, setIsTradeDialogOpen] = React.useState(false);
+  const [tradeQuantity, setTradeQuantity] = React.useState(1);
+  const [isUnlistDialogOpen, setIsUnlistDialogOpen] = React.useState(false);
+  const [unlistQuantity, setUnlistQuantity] = React.useState(1);
 
   React.useEffect(() => {
     const handleOpenPack = (event) => {
@@ -99,28 +105,31 @@ export default function Home() {
   }, [navigate]);
 
   React.useEffect(() => {
+    fetchInventory();
+  }, [user?.id, user?.currency]);
+
+  const fetchInventory = () => {
+    if (!user?.id) return;
+
     const midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
 
-    if (user && user.id) {
-      fetch(`http://localhost:4000/api/inventory/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setInventory(data);
+    fetch(`http://localhost:4000/api/inventory/${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setInventory(data);
 
-          if (data.length === 0 && user.currency === 0) {
-            setCardPackMessage("Welcome Starter Pack!");
-            handleOpenCardPack(10, 0);
-          }
-          else if (data.length > 0 && user.lastDailyPack < midnight) {
-            setCardPackMessage("Free Daily Pack!");
-            handleOpenCardPack(5, 0)
-          }
-        })
-        .catch((err) => console.error("Error loading inventory:", err));
-    }
-  }, [user?.id, user?.currency]);
-
+        if (data.length === 0 && user.currency === 0) {
+          setCardPackMessage("Welcome Starter Pack!");
+          handleOpenCardPack(10, 0);
+        } 
+        else if (new Date(user.lastDailyPack) < midnight) {
+          setCardPackMessage("Free Daily Pack!");
+          handleOpenCardPack(5, 0);
+        }
+      })
+      .catch((err) => console.error("Error refreshing inventory:", err));
+  };
   const handleOpenCardPack = async (packSize = 5, packCost = 0) => {
     if (!user) return;
     try {
@@ -220,19 +229,65 @@ export default function Home() {
     return groups;
   }, {});
 
+  const handleConfirmTradeList = async () => {
+  try {
+    const response = await fetch("http://localhost:4000/api/trade/list", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        cardId: selectedCardMenuItem.cardId,
+        quantity: tradeQuantity,
+      }),
+    });
+
+    if (response.ok) {
+      setIsTradeDialogOpen(false);
+      fetchInventory(); 
+      alert("Cards listed successfully!");
+    } else {
+      const errorData = await response.json();
+      alert(errorData.error || "Failed to list cards.");
+    }
+  } catch (error) {
+    console.error("Trade listing error:", error);
+  }
+};
+const handleConfirmUnlist = async () => {
+  try {
+    const response = await fetch("http://localhost:4000/api/trade/unlist", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        cardId: selectedCardMenuItem.cardId,
+        quantity: unlistQuantity,
+      }),
+    });
+
+    if (response.ok) {
+      handleCloseUnlistDialog(); 
+      fetchInventory();
+    } else {
+      const errorData = await response.json();
+      alert(errorData.error || "Failed to unlist.");
+    }
+  } catch (error) {
+    console.error("Unlist error:", error);
+  }
+};
   const nationalities = Object.keys(groupedInventory).sort();
 
   const handleProfileMenuOpen = (event) =>
     setProfileMenuAnchor(event.currentTarget);
   const handleProfileMenuClose = () => setProfileMenuAnchor(null);
   const handleCardMenuOpen = (event, item) => {
-    setCardMenuAnchor(event.currentTarget);
     setSelectedCardMenuItem(item);
+    setCardMenuAnchor(event.currentTarget);
   };
 
   const handleCardMenuClose = () => {
     setCardMenuAnchor(null);
-    setSelectedCardMenuItem(null);
   };
   const handleOpenSellDialog = () => {
     setIsSellDialogOpen(true);
@@ -242,7 +297,33 @@ export default function Home() {
     setIsSellDialogOpen(false);
     setSelectedCardMenuItem(null);
   };
+  const handleOpenTradeDialog = () => {
+    setTradeQuantity(1);
+    setIsTradeDialogOpen(true);
+  };
+  const handleCloseTradeDialog = () => {
+    setIsTradeDialogOpen(false);
+    setSelectedCardMenuItem(null);
+  };
 
+const handleOpenUnlistDialog = () => {
+  setUnlistQuantity(1);
+  setIsUnlistDialogOpen(true);
+};
+const handleCloseUnlistDialog = () => {
+  setIsUnlistDialogOpen(false);
+  setSelectedCardMenuItem(null);
+  setUnlistQuantity(1);
+};
+  const listedCount = selectedCardMenuItem 
+  ? selectedCardMenuItem.quantity - (selectedCardMenuItem.displayQuantity ?? 0)
+  : 0;
+  console.log({
+  name: selectedCardMenuItem?.card?.short_name,
+  total: selectedCardMenuItem?.quantity,
+  avail: selectedCardMenuItem?.displayQuantity,
+  calculatedListed: listedCount
+});
   return (
     <Box
       sx={{ minHeight: "100vh", width: "75%", bgcolor: "background.default" }}
@@ -415,11 +496,16 @@ export default function Home() {
         }}
       >
         <MenuItem
+          disabled={selectedCardMenuItem?.displayQuantity === 0}
           onClick={() => {
+            handleOpenTradeDialog(selectedCardMenuItem);
             handleCardMenuClose();
           }}
         >
-          <InventoryIcon sx={{ mr: 1, fontSize: "small" }} /> Trade
+          <InventoryIcon sx={{ mr: 1, fontSize: "small" }} /> 
+            {selectedCardMenuItem?.displayQuantity === 0 
+              ? "Trade (All copies listed)" 
+              : `Trade (Available: ${selectedCardMenuItem?.displayQuantity})`}
         </MenuItem>
 
         <MenuItem
@@ -435,6 +521,17 @@ export default function Home() {
             : 0}
           )
         </MenuItem>
+              {listedCount > 0 && (
+        <MenuItem
+          onClick={() => {
+            handleCardMenuClose();
+            handleOpenUnlistDialog();
+          }}
+        >
+          <RemoveCircleOutlineIcon sx={{ mr: 1, fontSize: "small" }} />
+          Unlist Card (Listed: {listedCount})
+        </MenuItem>
+      )}
       </Menu>
 
       {/* Sell Confirmation Dialog */}
@@ -464,22 +561,103 @@ export default function Home() {
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
-          <Button onClick={handleCloseSellDialog} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              handleSellCard(selectedCardMenuItem);
-              handleCloseSellDialog();
-            }}
-            variant="contained"
-            color="error"
-          >
-            Confirm Sell
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
+            <Button onClick={handleCloseSellDialog} color="inherit">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                handleSellCard(selectedCardMenuItem);
+                handleCloseSellDialog();
+              }}
+              variant="contained"
+              color="error"
+            >
+              Confirm Sell
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={isTradeDialogOpen} onClose={() => setIsTradeDialogOpen(false)}>
+    <DialogTitle sx={{ textAlign: "center", fontWeight: "bold" }}>
+      List {selectedCardMenuItem?.card?.short_name} for Trade
+    </DialogTitle>
+    
+    <DialogContent>
+      <Typography variant="body1" sx={{ mb: 2 }}>
+        How many copies would you like to list?
+      </Typography>
+      
+      <TextField
+        type="number"
+        fullWidth
+        inputProps={{ 
+          min: 1, 
+          max: selectedCardMenuItem?.displayQuantity // Prevents over-listing
+        }}
+        value={tradeQuantity}
+        onChange={(e) => {
+          const val = parseInt(e.target.value);
+          const max = selectedCardMenuItem?.displayQuantity || 1;
+          setTradeQuantity(val > max ? max : val < 1 ? 1 : val);
+        }}
+        helperText={`Available to list: ${selectedCardMenuItem?.displayQuantity}`}
+      />
+    </DialogContent>
+    
+    <DialogActions sx={{ p: 3 }}>
+      <Button onClick={() => setIsTradeDialogOpen(false)} color="inherit">
+        Cancel
+      </Button>
+      <Button 
+        onClick={handleConfirmTradeList} 
+        variant="contained" 
+        color="primary"
+      >
+        Confirm Listing
+      </Button>
+    </DialogActions>
+  </Dialog>
+  <Dialog open={isUnlistDialogOpen} onClose={handleCloseUnlistDialog}>
+  <DialogTitle sx={{ textAlign: "center", fontWeight: "bold" }}>
+    Unlist {selectedCardMenuItem?.card?.short_name}
+  </DialogTitle>
+  
+  <DialogContent>
+    <Typography variant="body1" sx={{ mb: 2 }}>
+      How many copies would you like to remove from the trade list?
+    </Typography>
+    
+    <TextField
+      type="number"
+      fullWidth
+      inputProps={{ 
+        min: 1, 
+        max: listedCount 
+      }}
+      value={unlistQuantity}
+      onChange={(e) => {
+        const val = parseInt(e.target.value);
+        
+        setUnlistQuantity(val > listedCount ? listedCount : val < 1 ? 1 : val);
+      }}
+      helperText={`Currently listed: ${listedCount}`}
+    />
+  </DialogContent>
+  
+  <DialogActions sx={{ p: 3 }}>
+    <Button onClick={handleCloseUnlistDialog} color="inherit">
+      Cancel
+    </Button>
+    <Button 
+      onClick={handleConfirmUnlist} 
+      variant="contained" 
+      color="warning"
+    >
+      Confirm Unlist
+    </Button>
+  </DialogActions>
+</Dialog>
     </Box>
+    
   );
 }
