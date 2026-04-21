@@ -526,8 +526,8 @@ export default function Home() {
     container 
     sx={{ 
       display: "flex", 
-      flexDirection: { xs: "column", md: "row" }, // Stack on mobile, row on desktop
-      flexWrap: "nowrap", // <--- THIS prevents the "above/below" wrapping
+      flexDirection: { xs: "column", md: "row" }, 
+      flexWrap: "nowrap", 
       minHeight: 400
     }}
   >
@@ -535,8 +535,8 @@ export default function Home() {
     <Grid 
       item 
       sx={{ 
-        width: { xs: "100%", md: "260px" }, // Fixed width on desktop
-        flexShrink: 0, // Prevents the column from being squashed
+        width: { xs: "100%", md: "260px" }, 
+        flexShrink: 0, 
         bgcolor: "#000", 
         display: "flex", 
         alignItems: "center", 
